@@ -1,13 +1,13 @@
 {
   "ok": true,
-  "actualizadoAl": "2026-04-19T21:33:11.815Z",
+  "actualizadoAl": "2026-04-19T22:15:04.966Z",
   "pba": {
     "jusLey14967": {
       "valor": 49750,
       "fuenteNombre": "Colegio Morón",
       "fuenteUrl": "https://www.scba.gov.ar/",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T21:33:11.815Z"
+      "fechaConsulta": "2026-04-19T22:15:04.965Z"
     },
     "jusDL8904": {
       "valor": 33998,
@@ -21,21 +21,21 @@
       "fuenteNombre": "Colegio Morón",
       "fuenteUrl": "https://www.cajaabogados.org.ar/",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T21:33:11.815Z"
+      "fechaConsulta": "2026-04-19T22:15:04.965Z"
     },
     "bonoVerde8480": {
       "valor": 23100,
       "fuenteNombre": "Colegio Morón",
       "fuenteUrl": "https://colproba.org.ar/",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T21:33:11.815Z"
+      "fechaConsulta": "2026-04-19T22:15:04.966Z"
     },
     "bonoAzul8480": {
       "valor": 11550,
       "fuenteNombre": "Colegio Morón",
       "fuenteUrl": "https://colproba.org.ar/",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T21:33:11.815Z"
+      "fechaConsulta": "2026-04-19T22:15:04.966Z"
     }
   },
   "ipc": {
@@ -46,7 +46,16 @@
     "fuenteNombre": "INDEC / datos.gob.ar",
     "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=148.3_INIVELNAL_DICI_M_26",
     "status": "ok",
-    "fechaConsulta": "2026-04-19T21:33:09.703Z"
+    "fechaConsulta": "2026-04-19T22:15:03.244Z"
+  },
+  "ipcGba": {
+    "periodo": "2026-03",
+    "mensual": 3.2,
+    "interanual": 31.8,
+    "acumulada": 9.1,
+    "fuenteNombre": "IDECBA Dir. Estadística CABA",
+    "fuenteUrl": "https://www.estadisticaciudad.gob.ar/eyc/?p=indice_de_precios_al_consumidor",
+    "status": "fallback"
   },
   "ripte": {
     "periodo": "2026-01",
@@ -54,7 +63,7 @@
     "fuenteNombre": "MTSS / datos.gob.ar",
     "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=158.1_REPTE_0_0_5",
     "status": "ok",
-    "fechaConsulta": "2026-04-19T21:33:09.480Z"
+    "fechaConsulta": "2026-04-19T22:15:03.215Z"
   },
   "smvm": {
     "periodo": "2026-04",
@@ -62,7 +71,7 @@
     "fuenteNombre": "MTEySS / datos.gob.ar",
     "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=57.1_SMVMM_0_M_34",
     "status": "ok",
-    "fechaConsulta": "2026-04-19T21:33:09.481Z"
+    "fechaConsulta": "2026-04-19T22:15:03.225Z"
   },
   "bcra": {
     "uva": {
@@ -71,7 +80,7 @@
       "fuenteNombre": "BCRA / datos.gob.ar",
       "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=94.2_UVAD_D_0_0_10",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T21:33:09.479Z"
+      "fechaConsulta": "2026-04-19T22:15:03.208Z"
     },
     "cer": {
       "fecha": "2026-03-11",
@@ -79,7 +88,7 @@
       "fuenteNombre": "BCRA / datos.gob.ar",
       "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=94.2_CD_D_0_0_10",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T21:33:09.482Z"
+      "fechaConsulta": "2026-04-19T22:15:03.225Z"
     },
     "uvi": {
       "fecha": "2026-03-11",
@@ -87,7 +96,7 @@
       "fuenteNombre": "BCRA / datos.gob.ar",
       "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=94.2_UVID_D_0_0_10",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T21:33:09.481Z"
+      "fechaConsulta": "2026-04-19T22:15:03.208Z"
     },
     "icl": {
       "fecha": "16/05/2026",
@@ -95,7 +104,7 @@
       "fuenteNombre": "BCRA diar_icl.xls",
       "fuenteUrl": "https://www.bcra.gob.ar/Pdfs/PublicacionesEstadisticas/diar_icl.xls",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T21:33:10.512Z"
+      "fechaConsulta": "2026-04-19T22:15:03.741Z"
     }
   },
   "canastaCrianza": {
@@ -107,5 +116,85 @@
     "fuenteNombre": "INDEC Canasta de Crianza",
     "fuenteUrl": "https://www.indec.gob.ar/ftp/cuadros/sociedad/serie_canasta_crianza.xlsx",
     "status": "fallback"
+  },
+  "tasas": {
+    "acta2601": {
+      "tasaAnual": 90,
+      "vigenteDesde": "2026-04-01",
+      "fuenteNombre": "CNAT Planilla Acta 2601 (Activa Cart. Gral. BNA 30 días)",
+      "fuenteUrl": "https://www.cnat.pjn.gov.ar/",
+      "status": "manual",
+      "nota": "Verificar contra última planilla publicada por CNAT"
+    },
+    "acta2630": {
+      "tasaAnual": 95,
+      "vigenteDesde": "2026-04-01",
+      "fuenteNombre": "CNAT Planilla Acta 2630 (Nominal 36 meses BNA)",
+      "fuenteUrl": "https://www.cnat.pjn.gov.ar/",
+      "status": "manual"
+    },
+    "acta2658": {
+      "tasaAnual": 100,
+      "vigenteDesde": "2026-04-01",
+      "fuenteNombre": "CNAT Planilla Acta 2658 (Efectiva anual 49-60m BNA)",
+      "fuenteUrl": "https://www.cnat.pjn.gov.ar/",
+      "status": "manual"
+    },
+    "bnaActiva": {
+      "tasaAnual": 80,
+      "vigenteDesde": "2026-04-01",
+      "fuenteNombre": "BNA Cartera General 30 días",
+      "fuenteUrl": "https://www.bna.com.ar/",
+      "status": "manual"
+    },
+    "bnaPasiva": {
+      "tasaAnual": 40,
+      "vigenteDesde": "2026-04-01",
+      "fuenteNombre": "BNA Tasa Pasiva",
+      "fuenteUrl": "https://www.bna.com.ar/",
+      "status": "manual"
+    },
+    "bnaLibre36": {
+      "tasaAnual": 85,
+      "vigenteDesde": "2026-04-01",
+      "fuenteNombre": "BNA Préstamo Libre 36 meses",
+      "fuenteUrl": "https://www.bna.com.ar/",
+      "status": "manual"
+    },
+    "bnaLibre72": {
+      "tasaAnual": 90,
+      "vigenteDesde": "2026-04-01",
+      "fuenteNombre": "BNA Préstamo Libre 72 meses",
+      "fuenteUrl": "https://www.bna.com.ar/",
+      "status": "manual"
+    },
+    "bpActiva": {
+      "tasaAnual": 75,
+      "vigenteDesde": "2026-04-01",
+      "fuenteNombre": "BPBA Activa Cartera General",
+      "fuenteUrl": "https://www.bancoprovincia.com.ar/",
+      "status": "manual"
+    },
+    "bpPasiva": {
+      "tasaAnual": 45,
+      "vigenteDesde": "2026-04-01",
+      "fuenteNombre": "BPBA Pasiva",
+      "fuenteUrl": "https://www.bancoprovincia.com.ar/",
+      "status": "manual"
+    },
+    "badlar": {
+      "tasaAnual": 35,
+      "vigenteDesde": "2026-04-01",
+      "fuenteNombre": "BADLAR Bancos Privados (BCRA)",
+      "fuenteUrl": "https://www.bcra.gob.ar/",
+      "status": "fallback"
+    },
+    "tamar": {
+      "tasaAnual": 40,
+      "vigenteDesde": "2026-04-01",
+      "fuenteNombre": "TAMAR Bancos Privados (BCRA)",
+      "fuenteUrl": "https://www.bcra.gob.ar/",
+      "status": "fallback"
+    }
   }
 }

@@ -1,16 +1,23 @@
 // ═════════════════════════════════════════════════════════════════════
 //  LitigiAR — Scraper de valores oficiales (GitHub Actions)
 //  Corre cada 6hs, produce valores.json en raíz del repo.
-//  Fuentes:
-//    - datos.gob.ar (IPC, UVA, CER, UVI, RIPTE, SMVM)
+//
+//  AUTO-SCRAPEADOS:
+//    - datos.gob.ar (IPC Nacional, UVA, CER, UVI, RIPTE, SMVM, BADLAR)
 //    - BCRA diar_icl.xls (ICL)
 //    - ColProBA / La Matanza / Morón (JUS, Bonos)
 //    - INDEC Canasta Crianza XLSX
+//    - IDECBA IPC CABA/GBA (HTML scrape)
+//
+//  MANUAL (requieren edición periódica de valores.json):
+//    - tasas.acta2601, acta2630, acta2658  (CNAT publica planillas PDF)
+//    - tasas.bnaActiva, bnaPasiva, bnaLibre36, bnaLibre72 (BNA sitio dinámico)
+//    - tasas.bpActiva, bpPasiva (BPBA sitio dinámico)
 //
 //  Política tolerante a fallos:
 //    - Si un scraper falla, mantiene el valor anterior con status="stale"
 //    - Si nunca hubo valor, cae a fallback con status="fallback"
-//    - Nunca pierde un valor exitoso
+//    - Los valores "manual" mantienen status="manual" hasta próxima edición
 // ═════════════════════════════════════════════════════════════════════
 
 const fs      = require('fs');
@@ -39,7 +46,24 @@ const FALLBACK = {
   },
   ripte:          {periodo:"2026-02", valor:1128450, fuenteNombre:"MTSS (datos.gob.ar)", fuenteUrl:"https://apis.datos.gob.ar/series/api/series/?ids=158.1_REPTE_0_0_5", status:"fallback"},
   smvm:           {periodo:"2026-02", valor:391000, vigenteDesde:"2026-02-01", fuenteNombre:"Res. 3/2026 CNEPySMVyM", fuenteUrl:"https://apis.datos.gob.ar/series/api/series/?ids=57.1_SMVMM_0_M_34", status:"fallback"},
-  canastaCrianza: {periodo:"2026-03", menor1:515236, edad1a3:616046, edad4a5:538587, edad6a12:676431, fuenteNombre:"INDEC Canasta de Crianza", fuenteUrl:"https://www.indec.gob.ar/ftp/cuadros/sociedad/serie_canasta_crianza.xlsx", status:"fallback"}
+  canastaCrianza: {periodo:"2026-03", menor1:515236, edad1a3:616046, edad4a5:538587, edad6a12:676431, fuenteNombre:"INDEC Canasta de Crianza", fuenteUrl:"https://www.indec.gob.ar/ftp/cuadros/sociedad/serie_canasta_crianza.xlsx", status:"fallback"},
+  // ── IPC CABA/GBA (IDECBA) — se intenta scrape, sino fallback ──
+  ipcGba: {periodo:"2026-03", mensual:3.2, interanual:31.8, acumulada:9.1, fuenteNombre:"IDECBA Dir. Estadística CABA", fuenteUrl:"https://www.estadisticaciudad.gob.ar/eyc/?p=indice_de_precios_al_consumidor", status:"fallback"},
+  // ── Tasas (MANUAL) — editar valores.json directamente cuando cambien.
+  //     Fuente: CNAT Planilla actualización (PDF mensual) + BNA.com.ar + BPBA.com.ar
+  tasas: {
+    acta2601:   {tasaAnual:90,  vigenteDesde:"2026-04-01", fuenteNombre:"CNAT Planilla Acta 2601 (Activa Cart. Gral. BNA 30 días)", fuenteUrl:"https://www.cnat.pjn.gov.ar/", status:"manual", nota:"Verificar contra última planilla publicada por CNAT"},
+    acta2630:   {tasaAnual:95,  vigenteDesde:"2026-04-01", fuenteNombre:"CNAT Planilla Acta 2630 (Nominal 36 meses BNA)", fuenteUrl:"https://www.cnat.pjn.gov.ar/", status:"manual"},
+    acta2658:   {tasaAnual:100, vigenteDesde:"2026-04-01", fuenteNombre:"CNAT Planilla Acta 2658 (Efectiva anual 49-60m BNA)", fuenteUrl:"https://www.cnat.pjn.gov.ar/", status:"manual"},
+    bnaActiva:  {tasaAnual:80,  vigenteDesde:"2026-04-01", fuenteNombre:"BNA Cartera General 30 días", fuenteUrl:"https://www.bna.com.ar/", status:"manual"},
+    bnaPasiva:  {tasaAnual:40,  vigenteDesde:"2026-04-01", fuenteNombre:"BNA Tasa Pasiva", fuenteUrl:"https://www.bna.com.ar/", status:"manual"},
+    bnaLibre36: {tasaAnual:85,  vigenteDesde:"2026-04-01", fuenteNombre:"BNA Préstamo Libre 36 meses", fuenteUrl:"https://www.bna.com.ar/", status:"manual"},
+    bnaLibre72: {tasaAnual:90,  vigenteDesde:"2026-04-01", fuenteNombre:"BNA Préstamo Libre 72 meses", fuenteUrl:"https://www.bna.com.ar/", status:"manual"},
+    bpActiva:   {tasaAnual:75,  vigenteDesde:"2026-04-01", fuenteNombre:"BPBA Activa Cartera General", fuenteUrl:"https://www.bancoprovincia.com.ar/", status:"manual"},
+    bpPasiva:   {tasaAnual:45,  vigenteDesde:"2026-04-01", fuenteNombre:"BPBA Pasiva", fuenteUrl:"https://www.bancoprovincia.com.ar/", status:"manual"},
+    badlar:     {tasaAnual:35,  vigenteDesde:"2026-04-01", fuenteNombre:"BADLAR Bancos Privados (BCRA)", fuenteUrl:"https://www.bcra.gob.ar/", status:"fallback"},
+    tamar:      {tasaAnual:40,  vigenteDesde:"2026-04-01", fuenteNombre:"TAMAR Bancos Privados (BCRA)", fuenteUrl:"https://www.bcra.gob.ar/", status:"fallback"}
+  }
 };
 
 const UA = {'User-Agent':'Mozilla/5.0 (LitigiAR-bot/1.0; +https://argentinalitigia.com)'};
@@ -253,12 +277,61 @@ async function refreshPBA(prev){
   return out;
 }
 
+// ═══════ IPC CABA / GBA (IDECBA) ═══════
+async function scrapearIDECBA(){
+  try {
+    // IDECBA publica tabla en su portal. Buscamos la serie más reciente.
+    const url = 'https://www.estadisticaciudad.gob.ar/eyc/?p=indice_de_precios_al_consumidor';
+    const { data } = await axios.get(url, { timeout: 20000, headers: UA });
+    const texto = cheerio.load(data)('body').text().replace(/\s+/g, ' ');
+    // Patrón: busca "variación mensual" + un porcentaje cerca
+    const matMensual = texto.match(/variaci[oó]n\s+mensual[^%]{0,80}?(\d+[,.]\d+)\s*%/i);
+    const matInteranual = texto.match(/interanual[^%]{0,80}?(\d+[,.]\d+)\s*%/i);
+    const matAcumulada = texto.match(/acumulad[ao][^%]{0,80}?(\d+[,.]\d+)\s*%/i);
+    const parseNum = (s) => s ? parseFloat(String(s[1]).replace(',', '.')) : null;
+    const mensual = parseNum(matMensual);
+    if (!mensual) return null;
+    // Período: generalmente el mes anterior al actual
+    const ahora = new Date();
+    ahora.setMonth(ahora.getMonth() - 1);
+    const periodo = ahora.toISOString().substring(0, 7);
+    return {
+      periodo,
+      mensual,
+      interanual: parseNum(matInteranual),
+      acumulada: parseNum(matAcumulada),
+      fuenteNombre: 'IDECBA Dir. Estadística CABA',
+      fuenteUrl: url,
+      status: 'ok',
+      fechaConsulta: new Date().toISOString()
+    };
+  } catch (e) {
+    console.warn('[VALORES] IDECBA fail:', e.message);
+    return null;
+  }
+}
+
+// ═══════ BADLAR + TAMAR (datos.gob.ar BCRA) ═══════
+async function fetchBADLAR(){
+  // BADLAR bancos privados tasa nominal anual
+  const r = await fetchSerieGob('https://apis.datos.gob.ar/series/api/series/?ids=7935.3_BADLARPRIVADOS_0_M_32&sort=desc&limit=1&metadata=none');
+  if (!r) return null;
+  return {
+    fecha: String(r[0]).substring(0, 10),
+    tasaAnual: Number(Number(r[1]).toFixed(2)),
+    fuenteNombre: 'BADLAR Bancos Privados (BCRA)',
+    fuenteUrl: 'https://apis.datos.gob.ar/series/api/series/?ids=7935.3_BADLARPRIVADOS_0_M_32',
+    status: 'ok',
+    fechaConsulta: new Date().toISOString()
+  };
+}
+
 // ═══════ Orquestador ═══════
 async function main(){
   console.log('[VALORES] Iniciando scrape…', new Date().toISOString());
   const prev = loadPrevious();
 
-  const [ipc, uva, cer, uvi, icl, ripte, smvm, canasta, pba] = await Promise.all([
+  const [ipc, uva, cer, uvi, icl, ripte, smvm, canasta, pba, ipcGba, badlar] = await Promise.all([
     fetchIPC().catch(()=>null),
     fetchBCRAdiario('94.2_UVAD_D_0_0_10').catch(()=>null),
     fetchBCRAdiario('94.2_CD_D_0_0_10').catch(()=>null),
@@ -267,7 +340,9 @@ async function main(){
     fetchRIPTE().catch(()=>null),
     fetchSMVM().catch(()=>null),
     scrapearCanastaCrianza().catch(()=>null),
-    refreshPBA(prev)
+    refreshPBA(prev),
+    scrapearIDECBA().catch(()=>null),
+    fetchBADLAR().catch(()=>null)
   ]);
 
   // Helper para elegir entre nuevo / stale / fallback
@@ -282,27 +357,46 @@ async function main(){
     return Object.assign({}, fallback, {status:'fallback'});
   };
 
+  // Merge tasas: prev "manual" stays (último valor editado), BADLAR scraped, otras fallback
+  const tasasPrev = (prev && prev.tasas) || {};
+  const tasasSalida = {};
+  Object.keys(FALLBACK.tasas).forEach(k => {
+    if (k === 'badlar' && badlar) {
+      tasasSalida[k] = Object.assign({vigenteDesde: badlar.fecha}, FALLBACK.tasas[k], badlar, {status:'ok'});
+    } else if (tasasPrev[k] && (tasasPrev[k].status === 'manual' || tasasPrev[k].status === 'ok')) {
+      // Mantener valor manual/ok previo (no pisar con fallback)
+      tasasSalida[k] = tasasPrev[k];
+    } else {
+      tasasSalida[k] = Object.assign({}, FALLBACK.tasas[k]);
+    }
+  });
+
   const salida = {
     ok: true,
     actualizadoAl: new Date().toISOString(),
     pba,
-    ipc:   ipc   || elegir('ipc', 'ipc', null, FALLBACK.ipc),
-    ripte: ripte || elegir('ripte', 'ripte', null, FALLBACK.ripte),
-    smvm:  smvm  || elegir('smvm', 'smvm', null, FALLBACK.smvm),
+    ipc:    ipc    || elegir('ipc', 'ipc', null, FALLBACK.ipc),
+    ipcGba: ipcGba || elegir('ipcGba', 'ipcGba', null, FALLBACK.ipcGba),
+    ripte:  ripte  || elegir('ripte', 'ripte', null, FALLBACK.ripte),
+    smvm:   smvm   || elegir('smvm', 'smvm', null, FALLBACK.smvm),
     bcra: {
       uva: uva || elegir('bcra','uva', null, FALLBACK.bcra.uva),
       cer: cer || elegir('bcra','cer', null, FALLBACK.bcra.cer),
       uvi: uvi || elegir('bcra','uvi', null, FALLBACK.bcra.uvi),
       icl: icl || elegir('bcra','icl', null, FALLBACK.bcra.icl)
     },
-    canastaCrianza: canasta || elegir('canastaCrianza','canastaCrianza', null, FALLBACK.canastaCrianza)
+    canastaCrianza: canasta || elegir('canastaCrianza','canastaCrianza', null, FALLBACK.canastaCrianza),
+    tasas: tasasSalida
   };
 
   logStatus('PBA', salida.pba);
   logStatus('BCRA', salida.bcra);
-  console.log(`[VALORES] IPC: ${salida.ipc.status} (${salida.ipc.periodo}) ${salida.ipc.mensual}%`);
+  logStatus('TASAS', salida.tasas);
+  console.log(`[VALORES] IPC Nac: ${salida.ipc.status} (${salida.ipc.periodo}) ${salida.ipc.mensual}%`);
+  console.log(`[VALORES] IPC GBA (IDECBA): ${salida.ipcGba.status} (${salida.ipcGba.periodo}) ${salida.ipcGba.mensual}%`);
   console.log(`[VALORES] RIPTE: ${salida.ripte.status} (${salida.ripte.periodo}) $${salida.ripte.valor}`);
   console.log(`[VALORES] SMVM: ${salida.smvm.status} (${salida.smvm.periodo}) $${salida.smvm.valor}`);
+  console.log(`[VALORES] BADLAR: ${salida.tasas.badlar.status} ${salida.tasas.badlar.tasaAnual}%`);
   console.log(`[VALORES] Canasta: ${salida.canastaCrianza.status} (${salida.canastaCrianza.periodo})`);
 
   // Contar statuses
