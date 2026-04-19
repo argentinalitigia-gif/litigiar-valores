@@ -311,6 +311,86 @@ async function scrapearIDECBA(){
   }
 }
 
+// ═══════ Tasas CNAT / BNA / BPBA (scraping multi-fuente) ═══════
+// Estrategia: probamos 3 fuentes que publican tasas actualizadas:
+//   1) CNAT oficial (tasas-de-interes)
+//   2) Enlaces Jurídicos (tablas agregadas, públicas)
+//   3) TodosXDerecho (alternativa)
+// Extraemos con regex flexible cada valor por Acta.
+async function scrapearTasasPublicadas(){
+  var fuentes = [
+    // CNAT / PJN oficial (pueden responder desde IPs US de GitHub Actions)
+    'https://old.pjn.gov.ar/04_cnat/index.asp',
+    'https://www.pjn.gov.ar/',
+    // Enlaces Jurídicos (aggregator público)
+    'https://www.enlacesjuridicos.com.ar/',
+    'https://www.enlacesjuridicos.com.ar/index',
+    // Colegios profesionales que publican tasas (redundancia)
+    'https://camoron.org.ar/',
+    'https://colproba.org.ar/',
+    // BNA directo (puede tener bot-block)
+    'https://www.bna.com.ar/Personas/TasasdeInteres',
+    // Google-cached fallback
+    'https://www.google.com/search?q=tasa+acta+cnat+2601+vigente+bna'
+  ];
+  var tasas = {};
+  var fuenteExitosa = null;
+
+  for (var i = 0; i < fuentes.length; i++) {
+    var url = fuentes[i];
+    try {
+      var res = await axios.get(url, { timeout: 15000, headers: UA });
+      var $ = cheerio.load(res.data);
+      var texto = $('body').text().replace(/\s+/g, ' ');
+
+      // Patrones flexibles — buscan "Acta NNNN" cercana a un porcentaje
+      var patrones = {
+        acta2601: /Acta\s*2601[^%]{0,120}?(\d{1,4}[,.]\d{1,4})\s*%/i,
+        acta2630: /Acta\s*2630[^%]{0,120}?(\d{1,4}[,.]\d{1,4})\s*%/i,
+        acta2658: /Acta\s*2658[^%]{0,120}?(\d{1,4}[,.]\d{1,4})\s*%/i,
+        acta2764: /Acta\s*2764[^%]{0,120}?(\d{1,4}[,.]\d{1,4})\s*%/i,
+        acta2783: /Acta\s*2783[^%]{0,120}?(\d{1,4}[,.]\d{1,4})\s*%/i,
+        // BNA: activa / pasiva / libre 36m / libre 72m
+        bnaActiva:  /BNA\s*(?:Tasa\s*)?Activa[^%]{0,80}?(\d{1,4}[,.]\d{1,4})\s*%/i,
+        bnaPasiva:  /BNA\s*(?:Tasa\s*)?Pasiva[^%]{0,80}?(\d{1,4}[,.]\d{1,4})\s*%/i,
+        bnaLibre36: /(?:BNA\s*)?Libre\s*(?:destino\s*)?36\s*meses[^%]{0,80}?(\d{1,4}[,.]\d{1,4})\s*%/i,
+        bnaLibre72: /(?:BNA\s*)?Libre\s*(?:destino\s*)?72\s*meses[^%]{0,80}?(\d{1,4}[,.]\d{1,4})\s*%/i,
+        // BPBA
+        bpActiva:   /(?:BP|Banco\s*Provincia)[^%]{0,30}?Activa[^%]{0,80}?(\d{1,4}[,.]\d{1,4})\s*%/i,
+        bpPasiva:   /(?:BP|Banco\s*Provincia)[^%]{0,30}?Pasiva[^%]{0,80}?(\d{1,4}[,.]\d{1,4})\s*%/i
+      };
+
+      Object.keys(patrones).forEach(function(key){
+        if (tasas[key]) return; // ya lo tenemos de otra fuente
+        var m = texto.match(patrones[key]);
+        if (m) {
+          var val = parseFloat(String(m[1]).replace(',', '.'));
+          // Filtro razonable: tasa entre 1% y 500% anual
+          if (isFinite(val) && val >= 1 && val <= 500) {
+            tasas[key] = {
+              tasaAnual: val,
+              fuenteNombre: url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0],
+              fuenteUrl: url,
+              status: 'ok',
+              fechaConsulta: new Date().toISOString()
+            };
+            if (!fuenteExitosa) fuenteExitosa = url;
+          }
+        }
+      });
+
+      // Si ya tenemos las 3 principales, salimos
+      if (tasas.acta2601 && tasas.acta2630 && tasas.acta2658) break;
+    } catch(e){
+      console.warn('[VALORES] Tasas fuente '+url+' fail:', e.message);
+    }
+  }
+
+  if (Object.keys(tasas).length === 0) return null;
+  console.log('[VALORES] Tasas OK: '+Object.keys(tasas).join(', ')+' (fuente: '+fuenteExitosa+')');
+  return tasas;
+}
+
 // ═══════ BADLAR + TAMAR (datos.gob.ar BCRA) ═══════
 async function fetchBADLAR(){
   // BADLAR bancos privados tasa nominal anual
@@ -331,7 +411,7 @@ async function main(){
   console.log('[VALORES] Iniciando scrape…', new Date().toISOString());
   const prev = loadPrevious();
 
-  const [ipc, uva, cer, uvi, icl, ripte, smvm, canasta, pba, ipcGba, badlar] = await Promise.all([
+  const [ipc, uva, cer, uvi, icl, ripte, smvm, canasta, pba, ipcGba, badlar, tasasPub] = await Promise.all([
     fetchIPC().catch(()=>null),
     fetchBCRAdiario('94.2_UVAD_D_0_0_10').catch(()=>null),
     fetchBCRAdiario('94.2_CD_D_0_0_10').catch(()=>null),
@@ -342,7 +422,8 @@ async function main(){
     scrapearCanastaCrianza().catch(()=>null),
     refreshPBA(prev),
     scrapearIDECBA().catch(()=>null),
-    fetchBADLAR().catch(()=>null)
+    fetchBADLAR().catch(()=>null),
+    scrapearTasasPublicadas().catch(()=>null)
   ]);
 
   // Helper para elegir entre nuevo / stale / fallback
@@ -357,19 +438,27 @@ async function main(){
     return Object.assign({}, fallback, {status:'fallback'});
   };
 
-  // Merge tasas: prev "manual" stays (último valor editado), BADLAR scraped, otras fallback
+  // Merge tasas: prioridad → 1) scrapeado ahora · 2) prev ok/manual · 3) fallback
   const tasasPrev = (prev && prev.tasas) || {};
   const tasasSalida = {};
+  const scrapedKeys = tasasPub ? Object.keys(tasasPub) : [];
   Object.keys(FALLBACK.tasas).forEach(k => {
     if (k === 'badlar' && badlar) {
       tasasSalida[k] = Object.assign({vigenteDesde: badlar.fecha}, FALLBACK.tasas[k], badlar, {status:'ok'});
-    } else if (tasasPrev[k] && (tasasPrev[k].status === 'manual' || tasasPrev[k].status === 'ok')) {
-      // Mantener valor manual/ok previo (no pisar con fallback)
+    } else if (tasasPub && tasasPub[k]) {
+      // Valor fresh-scrapeado
+      tasasSalida[k] = Object.assign({}, FALLBACK.tasas[k], tasasPub[k]);
+    } else if (tasasPrev[k] && tasasPrev[k].status === 'ok') {
+      // Último valor exitoso → stale
+      tasasSalida[k] = Object.assign({}, tasasPrev[k], {status:'stale', nota:'Último valor scrapeado · scraper no pudo refrescar'});
+    } else if (tasasPrev[k] && tasasPrev[k].status === 'manual') {
+      // Valor editado manualmente — respetar
       tasasSalida[k] = tasasPrev[k];
     } else {
       tasasSalida[k] = Object.assign({}, FALLBACK.tasas[k]);
     }
   });
+  console.log('[VALORES] Tasas scrapeadas OK: '+scrapedKeys.length+'/'+Object.keys(FALLBACK.tasas).length);
 
   const salida = {
     ok: true,
