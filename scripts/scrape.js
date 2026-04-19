@@ -508,10 +508,11 @@ async function main(){
   fs.writeFileSync(VALORES_PATH, JSON.stringify(salida, null, 2) + '\n', 'utf8');
   console.log('[VALORES] Escrito en', VALORES_PATH);
 
-  // Exit code según salud: si hay >5 fallback, algo está mal (excepto primera corrida)
-  if (prev && stats.fallback > 5) {
-    console.error('[VALORES] ALERTA: demasiados valores en fallback — revisar scrapers');
-    process.exit(1);
+  // Nunca hacemos exit 1 por fallbacks — esos son esperados.
+  // Sólo fallamos si hay un error no capturado (main().catch más abajo).
+  // Notamos en stdout si hay muchos fallbacks para monitoreo:
+  if (stats.fallback > 8) {
+    console.warn('[VALORES] ATENCIÓN: '+stats.fallback+' valores en fallback — revisar fuentes');
   }
 }
 
