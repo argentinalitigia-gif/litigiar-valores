@@ -391,19 +391,71 @@ async function scrapearTasasPublicadas(){
   return tasas;
 }
 
-// ═══════ BADLAR + TAMAR (datos.gob.ar BCRA) ═══════
-async function fetchBADLAR(){
-  // BADLAR bancos privados tasa nominal anual
-  const r = await fetchSerieGob('https://apis.datos.gob.ar/series/api/series/?ids=7935.3_BADLARPRIVADOS_0_M_32&sort=desc&limit=1&metadata=none');
-  if (!r) return null;
-  return {
-    fecha: String(r[0]).substring(0, 10),
-    tasaAnual: Number(Number(r[1]).toFixed(2)),
-    fuenteNombre: 'BADLAR Bancos Privados (BCRA)',
-    fuenteUrl: 'https://apis.datos.gob.ar/series/api/series/?ids=7935.3_BADLARPRIVADOS_0_M_32',
-    status: 'ok',
-    fechaConsulta: new Date().toISOString()
-  };
+// ═══════ BCRA API v4.0 — tasas oficiales diarias ═══════
+// Variables relevantes del BCRA (1220 total):
+//   7  = BADLAR nominal · 12 = Depósitos 30d (BNA Pasiva aprox)
+//   13 = Adelantos cta cte · 14 = Préstamos personales (BNA Activa aprox)
+//   35 = BADLAR efectiva · 43 = Com. P 14.290 (Uso de Justicia)
+//   44 = TAMAR nominal · 45 = TAMAR efectiva · 160 = Política monetaria
+async function fetchBCRAv4(){
+  try {
+    const https = require('https');
+    const r = await axios.get('https://api.bcra.gob.ar/estadisticas/v4.0/monetarias', {
+      timeout: 25000,
+      headers: UA,
+      httpsAgent: new https.Agent({ rejectUnauthorized: false })
+    });
+    if (!r.data || !r.data.results) return null;
+    const mapa = {};
+    r.data.results.forEach(v => {
+      mapa[v.idVariable] = {
+        valor: Number(v.ultValorInformado),
+        fecha: v.ultFechaInformada,
+        descripcion: (v.descripcion || '').trim(),
+        unidad: v.unidadExpresion
+      };
+    });
+    return mapa;
+  } catch(e) {
+    console.warn('[VALORES] BCRA v4 fail:', e.message);
+    return null;
+  }
+}
+
+// Mapeo de nuestras tasas → IDs variables BCRA
+const MAPEO_TASAS = {
+  acta2601:   { idVar: 14, fuenteNombre: "BCRA v4 (Préstamos personales) — aprox Acta 2601 Activa BNA" },
+  acta2630:   { idVar: 14, fuenteNombre: "BCRA v4 (Préstamos personales) — aprox Acta 2630 TNA 36m BNA" },
+  acta2658:   { idVar: 14, fuenteNombre: "BCRA v4 (Préstamos personales) — aprox Acta 2658 libre destino" },
+  bnaActiva:  { idVar: 14, fuenteNombre: "BCRA v4 (Préstamos personales) ≈ Activa BNA" },
+  bnaPasiva:  { idVar: 12, fuenteNombre: "BCRA v4 (Depósitos 30d) ≈ Pasiva BNA" },
+  bnaLibre36: { idVar: 14, fuenteNombre: "BCRA v4 (Préstamos personales) — aprox libre 36m" },
+  bnaLibre72: { idVar: 14, fuenteNombre: "BCRA v4 (Préstamos personales) — aprox libre 72m" },
+  bpActiva:   { idVar: 13, fuenteNombre: "BCRA v4 (Adelantos cta cte) ≈ BPBA Activa" },
+  bpPasiva:   { idVar: 12, fuenteNombre: "BCRA v4 (Depósitos 30d) ≈ BPBA Pasiva" },
+  badlar:     { idVar: 7,  fuenteNombre: "BCRA v4 BADLAR bancos privados (nominal)" },
+  tamar:      { idVar: 44, fuenteNombre: "BCRA v4 TAMAR bancos privados (nominal)" }
+};
+
+// Devuelve tasas scrapeadas en formato listo para mergear
+function aplicarBCRAaTasas(bcraMap){
+  if (!bcraMap) return null;
+  const out = {};
+  Object.keys(MAPEO_TASAS).forEach(k => {
+    const m = MAPEO_TASAS[k];
+    const v = bcraMap[m.idVar];
+    if (v && isFinite(v.valor) && v.valor > 0 && v.valor < 500) {
+      out[k] = {
+        tasaAnual: Number(v.valor.toFixed(2)),
+        vigenteDesde: v.fecha,
+        fuenteNombre: m.fuenteNombre,
+        fuenteUrl: 'https://api.bcra.gob.ar/estadisticas/v4.0/monetarias',
+        status: 'ok',
+        fechaConsulta: new Date().toISOString()
+      };
+    }
+  });
+  return Object.keys(out).length > 0 ? out : null;
 }
 
 // ═══════ Orquestador ═══════
@@ -422,9 +474,11 @@ async function main(){
     scrapearCanastaCrianza().catch(()=>null),
     refreshPBA(prev),
     scrapearIDECBA().catch(()=>null),
-    fetchBADLAR().catch(()=>null),
+    fetchBCRAv4().catch(()=>null),
     scrapearTasasPublicadas().catch(()=>null)
   ]);
+  // Transformamos el map BCRA v4 a nuestro formato de tasas
+  const tasasBCRA = aplicarBCRAaTasas(badlar); // 'badlar' ahora contiene mapa completo BCRA v4
 
   // Helper para elegir entre nuevo / stale / fallback
   const elegir = (seccion, campo, nuevo, fallback) => {
@@ -438,27 +492,25 @@ async function main(){
     return Object.assign({}, fallback, {status:'fallback'});
   };
 
-  // Merge tasas: prioridad → 1) scrapeado ahora · 2) prev ok/manual · 3) fallback
+  // Merge tasas: prioridad → 1) BCRA v4 (oficial) · 2) scrape HTML · 3) prev ok/manual · 4) fallback
   const tasasPrev = (prev && prev.tasas) || {};
   const tasasSalida = {};
-  const scrapedKeys = tasasPub ? Object.keys(tasasPub) : [];
   Object.keys(FALLBACK.tasas).forEach(k => {
-    if (k === 'badlar' && badlar) {
-      tasasSalida[k] = Object.assign({vigenteDesde: badlar.fecha}, FALLBACK.tasas[k], badlar, {status:'ok'});
+    if (tasasBCRA && tasasBCRA[k]) {
+      // BCRA oficial — prioridad máxima
+      tasasSalida[k] = Object.assign({}, FALLBACK.tasas[k], tasasBCRA[k]);
     } else if (tasasPub && tasasPub[k]) {
-      // Valor fresh-scrapeado
       tasasSalida[k] = Object.assign({}, FALLBACK.tasas[k], tasasPub[k]);
     } else if (tasasPrev[k] && tasasPrev[k].status === 'ok') {
-      // Último valor exitoso → stale
-      tasasSalida[k] = Object.assign({}, tasasPrev[k], {status:'stale', nota:'Último valor scrapeado · scraper no pudo refrescar'});
+      tasasSalida[k] = Object.assign({}, tasasPrev[k], {status:'stale', nota:'Último valor BCRA · scraper no pudo refrescar'});
     } else if (tasasPrev[k] && tasasPrev[k].status === 'manual') {
-      // Valor editado manualmente — respetar
       tasasSalida[k] = tasasPrev[k];
     } else {
       tasasSalida[k] = Object.assign({}, FALLBACK.tasas[k]);
     }
   });
-  console.log('[VALORES] Tasas scrapeadas OK: '+scrapedKeys.length+'/'+Object.keys(FALLBACK.tasas).length);
+  const cntOK = Object.values(tasasSalida).filter(t => t.status === 'ok').length;
+  console.log('[VALORES] Tasas OK (BCRA v4 + scrape): '+cntOK+'/'+Object.keys(FALLBACK.tasas).length);
 
   const salida = {
     ok: true,
