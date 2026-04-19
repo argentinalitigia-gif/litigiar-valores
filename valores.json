@@ -1,13 +1,13 @@
 {
   "ok": true,
-  "actualizadoAl": "2026-04-19T22:50:32.819Z",
+  "actualizadoAl": "2026-04-19T23:17:28.613Z",
   "pba": {
     "jusLey14967": {
       "valor": 49750,
       "fuenteNombre": "Colegio Morón",
       "fuenteUrl": "https://www.scba.gov.ar/",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T22:50:20.518Z"
+      "fechaConsulta": "2026-04-19T23:17:17.597Z"
     },
     "jusDL8904": {
       "valor": 33998,
@@ -21,21 +21,21 @@
       "fuenteNombre": "Colegio Morón",
       "fuenteUrl": "https://www.cajaabogados.org.ar/",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T22:50:20.518Z"
+      "fechaConsulta": "2026-04-19T23:17:17.597Z"
     },
     "bonoVerde8480": {
       "valor": 23100,
       "fuenteNombre": "Colegio Morón",
       "fuenteUrl": "https://colproba.org.ar/",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T22:50:20.518Z"
+      "fechaConsulta": "2026-04-19T23:17:17.597Z"
     },
     "bonoAzul8480": {
       "valor": 11550,
       "fuenteNombre": "Colegio Morón",
       "fuenteUrl": "https://colproba.org.ar/",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T22:50:20.518Z"
+      "fechaConsulta": "2026-04-19T23:17:17.597Z"
     }
   },
   "ipc": {
@@ -46,7 +46,7 @@
     "fuenteNombre": "INDEC / datos.gob.ar",
     "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=148.3_INIVELNAL_DICI_M_26",
     "status": "ok",
-    "fechaConsulta": "2026-04-19T22:50:17.037Z"
+    "fechaConsulta": "2026-04-19T23:17:12.975Z"
   },
   "ipcGba": {
     "periodo": "2026-03",
@@ -63,7 +63,7 @@
     "fuenteNombre": "MTSS / datos.gob.ar",
     "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=158.1_REPTE_0_0_5",
     "status": "ok",
-    "fechaConsulta": "2026-04-19T22:50:16.817Z"
+    "fechaConsulta": "2026-04-19T23:17:12.828Z"
   },
   "smvm": {
     "periodo": "2026-04",
@@ -71,7 +71,7 @@
     "fuenteNombre": "MTEySS / datos.gob.ar",
     "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=57.1_SMVMM_0_M_34",
     "status": "ok",
-    "fechaConsulta": "2026-04-19T22:50:16.827Z"
+    "fechaConsulta": "2026-04-19T23:17:12.816Z"
   },
   "bcra": {
     "uva": {
@@ -80,7 +80,7 @@
       "fuenteNombre": "BCRA / datos.gob.ar",
       "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=94.2_UVAD_D_0_0_10",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T22:50:16.811Z"
+      "fechaConsulta": "2026-04-19T23:17:12.791Z"
     },
     "cer": {
       "fecha": "2026-03-11",
@@ -88,7 +88,7 @@
       "fuenteNombre": "BCRA / datos.gob.ar",
       "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=94.2_CD_D_0_0_10",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T22:50:16.870Z"
+      "fechaConsulta": "2026-04-19T23:17:12.802Z"
     },
     "uvi": {
       "fecha": "2026-03-11",
@@ -96,7 +96,7 @@
       "fuenteNombre": "BCRA / datos.gob.ar",
       "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=94.2_UVID_D_0_0_10",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T22:50:16.812Z"
+      "fechaConsulta": "2026-04-19T23:17:12.774Z"
     },
     "icl": {
       "fecha": "16/05/2026",
@@ -104,7 +104,7 @@
       "fuenteNombre": "BCRA diar_icl.xls",
       "fuenteUrl": "https://www.bcra.gob.ar/Pdfs/PublicacionesEstadisticas/diar_icl.xls",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T22:50:19.071Z"
+      "fechaConsulta": "2026-04-19T23:17:15.972Z"
     }
   },
   "canastaCrianza": {
@@ -125,7 +125,7 @@
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
       "status": "ok",
       "nota": "Verificar contra última planilla publicada por CNAT",
-      "fechaConsulta": "2026-04-19T22:50:24.360Z",
+      "fechaConsulta": "2026-04-19T23:17:21.914Z",
       "consenso": 1
     },
     "acta2630": {
@@ -134,7 +134,7 @@
       "fuenteNombre": "BCRA v4",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T22:50:24.360Z",
+      "fechaConsulta": "2026-04-19T23:17:21.914Z",
       "consenso": 1
     },
     "acta2658": {
@@ -143,7 +143,7 @@
       "fuenteNombre": "BCRA v4",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T22:50:24.360Z",
+      "fechaConsulta": "2026-04-19T23:17:21.914Z",
       "consenso": 1
     },
     "bnaActiva": {
@@ -152,7 +152,7 @@
       "fuenteNombre": "BCRA v4",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T22:50:24.360Z",
+      "fechaConsulta": "2026-04-19T23:17:21.914Z",
       "consenso": 1
     },
     "bnaPasiva": {
@@ -161,7 +161,7 @@
       "fuenteNombre": "BCRA v4",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T22:50:24.360Z",
+      "fechaConsulta": "2026-04-19T23:17:21.914Z",
       "consenso": 1
     },
     "bnaLibre36": {
@@ -170,7 +170,7 @@
       "fuenteNombre": "BCRA v4",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T22:50:24.360Z",
+      "fechaConsulta": "2026-04-19T23:17:21.914Z",
       "consenso": 1
     },
     "bnaLibre72": {
@@ -179,7 +179,7 @@
       "fuenteNombre": "BCRA v4",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T22:50:24.360Z",
+      "fechaConsulta": "2026-04-19T23:17:21.914Z",
       "consenso": 1
     },
     "bpActiva": {
@@ -188,7 +188,7 @@
       "fuenteNombre": "BCRA v4",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T22:50:24.360Z",
+      "fechaConsulta": "2026-04-19T23:17:21.914Z",
       "consenso": 1
     },
     "bpPasiva": {
@@ -197,7 +197,7 @@
       "fuenteNombre": "BCRA v4",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T22:50:24.360Z",
+      "fechaConsulta": "2026-04-19T23:17:21.914Z",
       "consenso": 1
     },
     "badlar": {
@@ -206,7 +206,7 @@
       "fuenteNombre": "BCRA v4",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T22:50:24.360Z",
+      "fechaConsulta": "2026-04-19T23:17:21.914Z",
       "consenso": 1
     },
     "tamar": {
@@ -215,7 +215,7 @@
       "fuenteNombre": "BCRA v4",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T22:50:24.360Z",
+      "fechaConsulta": "2026-04-19T23:17:21.914Z",
       "consenso": 1
     }
   }
