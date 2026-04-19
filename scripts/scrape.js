@@ -458,6 +458,114 @@ function aplicarBCRAaTasas(bcraMap){
   return Object.keys(out).length > 0 ? out : null;
 }
 
+// ═══════════════════════════════════════════════════════════
+//  PLAYWRIGHT — scraping de sitios JS-rendered (BNA, BPBA, CNAT)
+// ═══════════════════════════════════════════════════════════
+const PLAYWRIGHT_ENABLED = process.env.PLAYWRIGHT_ENABLED === '1';
+
+async function getBrowser(){
+  if (!PLAYWRIGHT_ENABLED) return null;
+  try {
+    const { chromium } = require('playwright');
+    return await chromium.launch({ headless: true, args: ['--no-sandbox', '--disable-dev-shm-usage'] });
+  } catch(e) {
+    console.warn('[VALORES] Playwright launch fail:', e.message);
+    return null;
+  }
+}
+
+async function extraerTasasBNA(browser){
+  if (!browser) return null;
+  const page = await browser.newPage({ userAgent: UA['User-Agent'] });
+  try {
+    await page.goto('https://www.bna.com.ar/Personas/PrestamosVigentes', { waitUntil: 'networkidle', timeout: 40000 });
+    const texto = await page.textContent('body');
+    const match = (regex) => {
+      const m = texto.match(regex);
+      return m ? parseFloat(String(m[1]).replace(',', '.')) : null;
+    };
+    // Patrones flexibles — BNA rotula distinto pero siempre incluye "TNA" o "T.N.A." cerca
+    const activa = match(/Cartera\s*General[^%]{0,400}?(?:TNA|tasa\s*nominal)[^%]{0,100}?(\d{1,3}[,.]\d{1,4})\s*%/i);
+    const libre36 = match(/36\s*(?:meses|cuotas)[^%]{0,400}?(?:TNA|TEA|tasa)[^%]{0,100}?(\d{1,3}[,.]\d{1,4})\s*%/i);
+    const libre72 = match(/72\s*(?:meses|cuotas)[^%]{0,400}?(?:TNA|TEA|tasa)[^%]{0,100}?(\d{1,3}[,.]\d{1,4})\s*%/i);
+    const pasiva = match(/(?:plazo\s*fijo|depósito)[^%]{0,300}?(\d{1,3}[,.]\d{1,4})\s*%/i);
+    return { activa, pasiva, libre36, libre72, fuente: 'https://www.bna.com.ar/Personas/PrestamosVigentes' };
+  } catch(e) {
+    console.warn('[VALORES] BNA Playwright fail:', e.message);
+    return null;
+  } finally { await page.close().catch(()=>{}); }
+}
+
+async function extraerTasasBPBA(browser){
+  if (!browser) return null;
+  const page = await browser.newPage({ userAgent: UA['User-Agent'] });
+  try {
+    await page.goto('https://www.bancoprovincia.com.ar/cuentas_personales/tasas', { waitUntil: 'networkidle', timeout: 40000 });
+    const texto = await page.textContent('body');
+    const match = (regex) => {
+      const m = texto.match(regex);
+      return m ? parseFloat(String(m[1]).replace(',', '.')) : null;
+    };
+    const activa = match(/Cartera\s*General[^%]{0,400}?(\d{1,3}[,.]\d{1,4})\s*%/i);
+    const pasiva = match(/(?:plazo\s*fijo|depósito)[^%]{0,300}?(\d{1,3}[,.]\d{1,4})\s*%/i);
+    return { activa, pasiva, fuente: 'https://www.bancoprovincia.com.ar/' };
+  } catch(e) {
+    console.warn('[VALORES] BPBA Playwright fail:', e.message);
+    return null;
+  } finally { await page.close().catch(()=>{}); }
+}
+
+async function extraerTasasCNAT(browser){
+  if (!browser) return null;
+  const page = await browser.newPage({ userAgent: UA['User-Agent'] });
+  try {
+    // CNAT publica Planilla de Actualización en diversos URLs de PJN
+    const candidatos = [
+      'https://www.pjn.gov.ar/',
+      'https://www.cnat.gob.ar/'
+    ];
+    const actas = {};
+    for (const url of candidatos) {
+      try {
+        await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
+        const texto = await page.textContent('body');
+        ['2601','2630','2658','2764','2783'].forEach(nro => {
+          if (actas['acta'+nro]) return;
+          const re = new RegExp('Acta\\s*'+nro+'[^%]{0,150}?(\\d{1,3}[,.]\\d{1,4})\\s*%', 'i');
+          const m = texto.match(re);
+          if (m) {
+            const val = parseFloat(String(m[1]).replace(',', '.'));
+            if (isFinite(val) && val > 1 && val < 500) {
+              actas['acta'+nro] = val;
+            }
+          }
+        });
+        if (Object.keys(actas).length >= 3) break;
+      } catch(e){}
+    }
+    return Object.keys(actas).length ? Object.assign(actas, {fuente: 'CNAT/PJN'}) : null;
+  } catch(e) {
+    console.warn('[VALORES] CNAT Playwright fail:', e.message);
+    return null;
+  } finally { await page.close().catch(()=>{}); }
+}
+
+// Cruza BNA + BCRA v4 + colegios. Si ≥2 fuentes coinciden (±5%), status=ok consensus.
+function consensuarTasa(fuentes, etiquetaKey){
+  const vals = fuentes.filter(v => v != null && isFinite(v) && v > 0).map(Number);
+  if (vals.length === 0) return null;
+  if (vals.length === 1) return { valor: vals[0], consenso: 1 };
+  // Chequeo de consenso: si los valores están dentro del 10% entre sí, promediamos
+  const min = Math.min(...vals), max = Math.max(...vals);
+  const margen = max === 0 ? 0 : (max - min) / max;
+  if (margen <= 0.10) {
+    const prom = vals.reduce((s,x)=>s+x,0) / vals.length;
+    return { valor: Number(prom.toFixed(2)), consenso: vals.length };
+  }
+  // Sin consenso → devolver el primer valor (BCRA suele ser el primero por prioridad)
+  return { valor: vals[0], consenso: 1, disenso: vals };
+}
+
 // ═══════ Orquestador ═══════
 async function main(){
   console.log('[VALORES] Iniciando scrape…', new Date().toISOString());
@@ -480,6 +588,55 @@ async function main(){
   // Transformamos el map BCRA v4 a nuestro formato de tasas
   const tasasBCRA = aplicarBCRAaTasas(badlar); // 'badlar' ahora contiene mapa completo BCRA v4
 
+  // ── Playwright: scraping JS-rendered real (BNA / BPBA / CNAT) ──
+  const browser = await getBrowser();
+  let bnaReal = null, bpbaReal = null, cnatReal = null;
+  if (browser) {
+    [bnaReal, bpbaReal, cnatReal] = await Promise.all([
+      extraerTasasBNA(browser).catch(()=>null),
+      extraerTasasBPBA(browser).catch(()=>null),
+      extraerTasasCNAT(browser).catch(()=>null)
+    ]);
+    await browser.close().catch(()=>{});
+    console.log('[VALORES] Playwright: BNA='+(bnaReal?'ok':'fail')+' BPBA='+(bpbaReal?'ok':'fail')+' CNAT='+(cnatReal?'ok':'fail'));
+  } else {
+    console.log('[VALORES] Playwright deshabilitado (PLAYWRIGHT_ENABLED!=1) — usando solo BCRA v4');
+  }
+
+  // Cross-consenso: si BNA real y BCRA v4 coinciden (±10%), valor = promedio con consensus=N
+  const tasasFinales = {};
+  if (tasasBCRA) {
+    Object.keys(tasasBCRA).forEach(k => {
+      const fuentes = [tasasBCRA[k].tasaAnual];
+      let notaConsenso = 'BCRA v4';
+      let fuenteUrl = tasasBCRA[k].fuenteUrl;
+      // Agregar BNA real si disponible
+      if (bnaReal && (k === 'acta2601' || k === 'acta2630' || k === 'acta2658' || k === 'bnaActiva')) {
+        if (bnaReal.activa) { fuentes.push(bnaReal.activa); notaConsenso += ' + BNA'; }
+      }
+      if (bnaReal && k === 'bnaLibre36' && bnaReal.libre36) { fuentes.push(bnaReal.libre36); notaConsenso += ' + BNA'; }
+      if (bnaReal && k === 'bnaLibre72' && bnaReal.libre72) { fuentes.push(bnaReal.libre72); notaConsenso += ' + BNA'; }
+      if (bnaReal && k === 'bnaPasiva' && bnaReal.pasiva) { fuentes.push(bnaReal.pasiva); notaConsenso += ' + BNA'; }
+      if (bpbaReal && k === 'bpActiva' && bpbaReal.activa) { fuentes.push(bpbaReal.activa); notaConsenso += ' + BPBA'; }
+      if (bpbaReal && k === 'bpPasiva' && bpbaReal.pasiva) { fuentes.push(bpbaReal.pasiva); notaConsenso += ' + BPBA'; }
+      if (cnatReal && cnatReal[k]) { fuentes.push(cnatReal[k]); notaConsenso += ' + CNAT'; }
+      const c = consensuarTasa(fuentes, k);
+      if (c) {
+        tasasFinales[k] = Object.assign({}, tasasBCRA[k], {
+          tasaAnual: c.valor,
+          fuenteNombre: notaConsenso + (c.consenso>1?' (consenso '+c.consenso+')':''),
+          fuenteUrl,
+          status: 'ok',
+          fuentes: fuentes.length > 1 ? fuentes : undefined,
+          consenso: c.consenso,
+          disenso: c.disenso
+        });
+      }
+    });
+  }
+  // Si Playwright agregó valores fuera de BCRA (ej. BNA Libre 36m), se los incorporan también
+  const reemplazarBCRA = Object.keys(tasasFinales).length > 0 ? tasasFinales : tasasBCRA;
+
   // Helper para elegir entre nuevo / stale / fallback
   const elegir = (seccion, campo, nuevo, fallback) => {
     if (nuevo) return nuevo;
@@ -496,9 +653,9 @@ async function main(){
   const tasasPrev = (prev && prev.tasas) || {};
   const tasasSalida = {};
   Object.keys(FALLBACK.tasas).forEach(k => {
-    if (tasasBCRA && tasasBCRA[k]) {
-      // BCRA oficial — prioridad máxima
-      tasasSalida[k] = Object.assign({}, FALLBACK.tasas[k], tasasBCRA[k]);
+    if (reemplazarBCRA && reemplazarBCRA[k]) {
+      // BCRA + Playwright consensus — prioridad máxima
+      tasasSalida[k] = Object.assign({}, FALLBACK.tasas[k], reemplazarBCRA[k]);
     } else if (tasasPub && tasasPub[k]) {
       tasasSalida[k] = Object.assign({}, FALLBACK.tasas[k], tasasPub[k]);
     } else if (tasasPrev[k] && tasasPrev[k].status === 'ok') {
