@@ -1,0 +1,83 @@
+name: Stale check mensual
+
+# Corre el 1° de cada mes a las 09:00 UTC. Crea Issue si alguna fuente
+# no se actualiza hace >30 días.
+on:
+  schedule:
+    - cron: '0 9 1 * *'
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v5
+
+      - name: Detectar valores stale
+        id: check
+        run: |
+          node <<'EOF' > stale_report.txt
+          const fs = require('fs');
+          const data = JSON.parse(fs.readFileSync('valores.json','utf8'));
+          const now = Date.now();
+          const stales = [];
+          const recorrer = (obj, prefix) => {
+            for (const k in obj) {
+              const v = obj[k];
+              if (!v || typeof v !== 'object') continue;
+              if (v.fechaConsulta) {
+                const age = (now - new Date(v.fechaConsulta).getTime()) / (1000*60*60*24);
+                if (age > 30) {
+                  stales.push(`- **${prefix+k}**: última actualización hace ${Math.round(age)} días (status: ${v.status||'?'})`);
+                }
+              } else if (v.status === 'fallback' || v.status === 'manual') {
+                stales.push(`- **${prefix+k}**: en status "${v.status}" — sin auto-update`);
+              } else if (!v.status && !v.valor && !v.tasaAnual) {
+                recorrer(v, prefix+k+'.');
+              }
+            }
+          };
+          recorrer(data, '');
+          if (stales.length === 0) {
+            console.log('NO_STALE');
+          } else {
+            console.log(stales.join('\n'));
+          }
+          EOF
+          if grep -q NO_STALE stale_report.txt; then
+            echo "stale=false" >> $GITHUB_OUTPUT
+          else
+            echo "stale=true" >> $GITHUB_OUTPUT
+            echo "report<<EOF" >> $GITHUB_OUTPUT
+            cat stale_report.txt >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Crear Issue si hay stale
+        if: steps.check.outputs.stale == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `Se detectaron valores sin actualización automática reciente:
+
+            ${{ steps.check.outputs.report }}
+
+            **Acciones sugeridas:**
+            1. Revisar logs del último run de \`Actualizar valores oficiales\`
+            2. Verificar si la fuente oficial cambió URL/formato
+            3. Actualizar manualmente \`valores.json\` desde GitHub web editor si corresponde
+            4. Ajustar \`scripts/scrape.js\` si una fuente nueva está disponible
+
+            _Auto-generado por stale-check.yml_`;
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `[stale-check] Valores desactualizados a ${new Date().toISOString().substring(0,10)}`,
+              body: body,
+              labels: ['stale-values', 'automation']
+            });
