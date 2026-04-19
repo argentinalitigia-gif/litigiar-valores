@@ -1,0 +1,51 @@
+name: Actualizar valores oficiales
+
+on:
+  schedule:
+    # Cada 6 horas (00:00, 06:00, 12:00, 18:00 UTC)
+    - cron: '0 */6 * * *'
+  workflow_dispatch:  # permite disparar manualmente desde la UI de GitHub
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Run scraper
+        id: scrape
+        run: node scripts/scrape.js
+
+      - name: Commit updated valores.json
+        run: |
+          git config user.name "litigiar-bot"
+          git config user.email "bot@argentinalitigia.com"
+          git add valores.json
+          if git diff --staged --quiet; then
+            echo "Sin cambios en valores.json — skip commit"
+          else
+            TS=$(date -u +"%Y-%m-%d %H:%M UTC")
+            git commit -m "chore(valores): actualización automática $TS"
+            git push
+          fi
+
+      - name: Report failure
+        if: failure()
+        run: |
+          echo "::error::El scraper falló. Revisar logs y últimos cambios en fuentes oficiales."
+          echo "Fuentes a chequear:"
+          echo "  - BCRA diar_icl.xls"
+          echo "  - INDEC Canasta Crianza XLSX"
+          echo "  - ColProBA / Colegio La Matanza / Colegio Morón"

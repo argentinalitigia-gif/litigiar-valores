@@ -1,0 +1,14 @@
+{
+  "name": "litigiar-valores",
+  "version": "1.0.0",
+  "description": "Scrapers de valores oficiales para LitigiAR (corre en GitHub Actions cada 6hs)",
+  "private": true,
+  "scripts": {
+    "scrape": "node scripts/scrape.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "cheerio": "^1.0.0",
+    "xlsx": "^0.18.5"
+  }
+}
