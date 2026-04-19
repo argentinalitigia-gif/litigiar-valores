@@ -1,13 +1,13 @@
 {
   "ok": true,
-  "actualizadoAl": "2026-04-19T21:46:51.078Z",
+  "actualizadoAl": "2026-04-19T22:24:27.086Z",
   "pba": {
     "jusLey14967": {
       "valor": 49750,
       "fuenteNombre": "Colegio Morón",
       "fuenteUrl": "https://www.scba.gov.ar/",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T21:46:51.078Z"
+      "fechaConsulta": "2026-04-19T22:24:27.086Z"
     },
     "jusDL8904": {
       "valor": 33998,
@@ -21,21 +21,21 @@
       "fuenteNombre": "Colegio Morón",
       "fuenteUrl": "https://www.cajaabogados.org.ar/",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T21:46:51.078Z"
+      "fechaConsulta": "2026-04-19T22:24:27.086Z"
     },
     "bonoVerde8480": {
       "valor": 23100,
       "fuenteNombre": "Colegio Morón",
       "fuenteUrl": "https://colproba.org.ar/",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T21:46:51.078Z"
+      "fechaConsulta": "2026-04-19T22:24:27.086Z"
     },
     "bonoAzul8480": {
       "valor": 11550,
       "fuenteNombre": "Colegio Morón",
       "fuenteUrl": "https://colproba.org.ar/",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T21:46:51.078Z"
+      "fechaConsulta": "2026-04-19T22:24:27.086Z"
     }
   },
   "ipc": {
@@ -46,7 +46,7 @@
     "fuenteNombre": "INDEC / datos.gob.ar",
     "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=148.3_INIVELNAL_DICI_M_26",
     "status": "ok",
-    "fechaConsulta": "2026-04-19T21:46:47.043Z"
+    "fechaConsulta": "2026-04-19T22:24:24.429Z"
   },
   "ripte": {
     "periodo": "2026-01",
@@ -54,7 +54,7 @@
     "fuenteNombre": "MTSS / datos.gob.ar",
     "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=158.1_REPTE_0_0_5",
     "status": "ok",
-    "fechaConsulta": "2026-04-19T21:46:46.778Z"
+    "fechaConsulta": "2026-04-19T22:24:24.286Z"
   },
   "smvm": {
     "periodo": "2026-04",
@@ -62,7 +62,7 @@
     "fuenteNombre": "MTEySS / datos.gob.ar",
     "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=57.1_SMVMM_0_M_34",
     "status": "ok",
-    "fechaConsulta": "2026-04-19T21:46:46.770Z"
+    "fechaConsulta": "2026-04-19T22:24:24.273Z"
   },
   "bcra": {
     "uva": {
@@ -71,7 +71,7 @@
       "fuenteNombre": "BCRA / datos.gob.ar",
       "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=94.2_UVAD_D_0_0_10",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T21:46:46.776Z"
+      "fechaConsulta": "2026-04-19T22:24:24.279Z"
     },
     "cer": {
       "fecha": "2026-03-11",
@@ -79,7 +79,7 @@
       "fuenteNombre": "BCRA / datos.gob.ar",
       "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=94.2_CD_D_0_0_10",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T21:46:46.830Z"
+      "fechaConsulta": "2026-04-19T22:24:24.275Z"
     },
     "uvi": {
       "fecha": "2026-03-11",
@@ -87,7 +87,7 @@
       "fuenteNombre": "BCRA / datos.gob.ar",
       "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=94.2_UVID_D_0_0_10",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T21:46:46.770Z"
+      "fechaConsulta": "2026-04-19T22:24:24.275Z"
     },
     "icl": {
       "fecha": "16/05/2026",
@@ -95,7 +95,7 @@
       "fuenteNombre": "BCRA diar_icl.xls",
       "fuenteUrl": "https://www.bcra.gob.ar/Pdfs/PublicacionesEstadisticas/diar_icl.xls",
       "status": "ok",
-      "fechaConsulta": "2026-04-19T21:46:49.262Z"
+      "fechaConsulta": "2026-04-19T22:24:24.952Z"
     }
   },
   "canastaCrianza": {
