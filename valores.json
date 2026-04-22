@@ -1,13 +1,13 @@
 {
   "ok": true,
-  "actualizadoAl": "2026-04-22T06:24:35.175Z",
+  "actualizadoAl": "2026-04-22T15:59:29.749Z",
   "pba": {
     "jusLey14967": {
       "valor": 49750,
       "fuenteNombre": "Colegio Morón",
       "fuenteUrl": "https://www.scba.gov.ar/",
       "status": "ok",
-      "fechaConsulta": "2026-04-22T06:24:23.177Z"
+      "fechaConsulta": "2026-04-22T15:59:14.733Z"
     },
     "jusDL8904": {
       "valor": 33998,
@@ -21,21 +21,21 @@
       "fuenteNombre": "Colegio Morón",
       "fuenteUrl": "https://www.cajaabogados.org.ar/",
       "status": "ok",
-      "fechaConsulta": "2026-04-22T06:24:23.177Z"
+      "fechaConsulta": "2026-04-22T15:59:14.733Z"
     },
     "bonoVerde8480": {
       "valor": 23100,
       "fuenteNombre": "Colegio Morón",
       "fuenteUrl": "https://colproba.org.ar/",
       "status": "ok",
-      "fechaConsulta": "2026-04-22T06:24:23.177Z"
+      "fechaConsulta": "2026-04-22T15:59:14.733Z"
     },
     "bonoAzul8480": {
       "valor": 11550,
       "fuenteNombre": "Colegio Morón",
       "fuenteUrl": "https://colproba.org.ar/",
       "status": "ok",
-      "fechaConsulta": "2026-04-22T06:24:23.177Z"
+      "fechaConsulta": "2026-04-22T15:59:14.733Z"
     }
   },
   "ipc": {
@@ -46,7 +46,7 @@
     "fuenteNombre": "INDEC / datos.gob.ar",
     "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=148.3_INIVELNAL_DICI_M_26",
     "status": "ok",
-    "fechaConsulta": "2026-04-22T06:24:20.327Z"
+    "fechaConsulta": "2026-04-22T15:59:10.642Z"
   },
   "ipcGba": {
     "periodo": "2026-03",
@@ -63,7 +63,7 @@
     "fuenteNombre": "MTSS / datos.gob.ar",
     "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=158.1_REPTE_0_0_5",
     "status": "ok",
-    "fechaConsulta": "2026-04-22T06:24:19.921Z"
+    "fechaConsulta": "2026-04-22T15:59:10.412Z"
   },
   "smvm": {
     "periodo": "2026-04",
@@ -71,7 +71,7 @@
     "fuenteNombre": "MTEySS / datos.gob.ar",
     "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=57.1_SMVMM_0_M_34",
     "status": "ok",
-    "fechaConsulta": "2026-04-22T06:24:19.534Z"
+    "fechaConsulta": "2026-04-22T15:59:10.430Z"
   },
   "bcra": {
     "uva": {
@@ -80,7 +80,7 @@
       "fuenteNombre": "BCRA / datos.gob.ar",
       "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=94.2_UVAD_D_0_0_10",
       "status": "ok",
-      "fechaConsulta": "2026-04-22T06:24:19.920Z"
+      "fechaConsulta": "2026-04-22T15:59:10.479Z"
     },
     "cer": {
       "fecha": "2026-03-11",
@@ -88,7 +88,7 @@
       "fuenteNombre": "BCRA / datos.gob.ar",
       "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=94.2_CD_D_0_0_10",
       "status": "ok",
-      "fechaConsulta": "2026-04-22T06:24:19.938Z"
+      "fechaConsulta": "2026-04-22T15:59:10.480Z"
     },
     "uvi": {
       "fecha": "2026-03-11",
@@ -96,7 +96,7 @@
       "fuenteNombre": "BCRA / datos.gob.ar",
       "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=94.2_UVID_D_0_0_10",
       "status": "ok",
-      "fechaConsulta": "2026-04-22T06:24:19.534Z"
+      "fechaConsulta": "2026-04-22T15:59:10.381Z"
     },
     "icl": {
       "fecha": "16/05/2026",
@@ -104,7 +104,7 @@
       "fuenteNombre": "BCRA diar_icl.xls",
       "fuenteUrl": "https://www.bcra.gob.ar/Pdfs/PublicacionesEstadisticas/diar_icl.xls",
       "status": "ok",
-      "fechaConsulta": "2026-04-22T06:24:21.615Z"
+      "fechaConsulta": "2026-04-22T15:59:13.042Z"
     }
   },
   "canastaCrianza": {
@@ -119,114 +119,82 @@
   },
   "tasas": {
     "acta2601": {
-      "tasaAnual": 67.26,
-      "vigenteDesde": "2026-04-17",
-      "fuenteNombre": "BCRA v4",
-      "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
-      "status": "stale",
-      "nota": "Último valor BCRA · scraper no pudo refrescar",
-      "fechaConsulta": "2026-04-21T20:37:39.952Z",
-      "consenso": 1
+      "tasaAnual": 90,
+      "vigenteDesde": "2026-04-01",
+      "fuenteNombre": "CNAT Planilla Acta 2601 (Activa Cart. Gral. BNA 30 días)",
+      "fuenteUrl": "https://www.cnat.pjn.gov.ar/",
+      "status": "manual",
+      "nota": "Verificar contra última planilla publicada por CNAT"
     },
     "acta2630": {
-      "tasaAnual": 67.26,
-      "vigenteDesde": "2026-04-17",
-      "fuenteNombre": "BCRA v4",
-      "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
-      "status": "stale",
-      "fechaConsulta": "2026-04-21T20:37:39.952Z",
-      "consenso": 1,
-      "nota": "Último valor BCRA · scraper no pudo refrescar"
+      "tasaAnual": 95,
+      "vigenteDesde": "2026-04-01",
+      "fuenteNombre": "CNAT Planilla Acta 2630 (Nominal 36 meses BNA)",
+      "fuenteUrl": "https://www.cnat.pjn.gov.ar/",
+      "status": "manual"
     },
     "acta2658": {
-      "tasaAnual": 67.26,
-      "vigenteDesde": "2026-04-17",
-      "fuenteNombre": "BCRA v4",
-      "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
-      "status": "stale",
-      "fechaConsulta": "2026-04-21T20:37:39.952Z",
-      "consenso": 1,
-      "nota": "Último valor BCRA · scraper no pudo refrescar"
+      "tasaAnual": 100,
+      "vigenteDesde": "2026-04-01",
+      "fuenteNombre": "CNAT Planilla Acta 2658 (Efectiva anual 49-60m BNA)",
+      "fuenteUrl": "https://www.cnat.pjn.gov.ar/",
+      "status": "manual"
     },
     "bnaActiva": {
-      "tasaAnual": 67.26,
-      "vigenteDesde": "2026-04-17",
-      "fuenteNombre": "BCRA v4",
-      "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
-      "status": "stale",
-      "fechaConsulta": "2026-04-21T20:37:39.952Z",
-      "consenso": 1,
-      "nota": "Último valor BCRA · scraper no pudo refrescar"
+      "tasaAnual": 80,
+      "vigenteDesde": "2026-04-01",
+      "fuenteNombre": "BNA Cartera General 30 días",
+      "fuenteUrl": "https://www.bna.com.ar/",
+      "status": "manual"
     },
     "bnaPasiva": {
-      "tasaAnual": 21.44,
-      "vigenteDesde": "2026-04-17",
-      "fuenteNombre": "BCRA v4",
-      "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
-      "status": "stale",
-      "fechaConsulta": "2026-04-21T20:37:39.952Z",
-      "consenso": 1,
-      "nota": "Último valor BCRA · scraper no pudo refrescar"
+      "tasaAnual": 40,
+      "vigenteDesde": "2026-04-01",
+      "fuenteNombre": "BNA Tasa Pasiva",
+      "fuenteUrl": "https://www.bna.com.ar/",
+      "status": "manual"
     },
     "bnaLibre36": {
-      "tasaAnual": 67.26,
-      "vigenteDesde": "2026-04-17",
-      "fuenteNombre": "BCRA v4",
-      "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
-      "status": "stale",
-      "fechaConsulta": "2026-04-21T20:37:39.952Z",
-      "consenso": 1,
-      "nota": "Último valor BCRA · scraper no pudo refrescar"
+      "tasaAnual": 85,
+      "vigenteDesde": "2026-04-01",
+      "fuenteNombre": "BNA Préstamo Libre 36 meses",
+      "fuenteUrl": "https://www.bna.com.ar/",
+      "status": "manual"
     },
     "bnaLibre72": {
-      "tasaAnual": 67.26,
-      "vigenteDesde": "2026-04-17",
-      "fuenteNombre": "BCRA v4",
-      "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
-      "status": "stale",
-      "fechaConsulta": "2026-04-21T20:37:39.952Z",
-      "consenso": 1,
-      "nota": "Último valor BCRA · scraper no pudo refrescar"
+      "tasaAnual": 90,
+      "vigenteDesde": "2026-04-01",
+      "fuenteNombre": "BNA Préstamo Libre 72 meses",
+      "fuenteUrl": "https://www.bna.com.ar/",
+      "status": "manual"
     },
     "bpActiva": {
-      "tasaAnual": 25.85,
-      "vigenteDesde": "2026-04-17",
-      "fuenteNombre": "BCRA v4",
-      "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
-      "status": "stale",
-      "fechaConsulta": "2026-04-21T20:37:39.952Z",
-      "consenso": 1,
-      "nota": "Último valor BCRA · scraper no pudo refrescar"
+      "tasaAnual": 75,
+      "vigenteDesde": "2026-04-01",
+      "fuenteNombre": "BPBA Activa Cartera General",
+      "fuenteUrl": "https://www.bancoprovincia.com.ar/",
+      "status": "manual"
     },
     "bpPasiva": {
-      "tasaAnual": 21.44,
-      "vigenteDesde": "2026-04-17",
-      "fuenteNombre": "BCRA v4",
-      "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
-      "status": "stale",
-      "fechaConsulta": "2026-04-21T20:37:39.952Z",
-      "consenso": 1,
-      "nota": "Último valor BCRA · scraper no pudo refrescar"
+      "tasaAnual": 45,
+      "vigenteDesde": "2026-04-01",
+      "fuenteNombre": "BPBA Pasiva",
+      "fuenteUrl": "https://www.bancoprovincia.com.ar/",
+      "status": "manual"
     },
     "badlar": {
-      "tasaAnual": 22.38,
-      "vigenteDesde": "2026-04-17",
-      "fuenteNombre": "BCRA v4",
-      "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
-      "status": "stale",
-      "fechaConsulta": "2026-04-21T20:37:39.952Z",
-      "consenso": 1,
-      "nota": "Último valor BCRA · scraper no pudo refrescar"
+      "tasaAnual": 35,
+      "vigenteDesde": "2026-04-01",
+      "fuenteNombre": "BADLAR Bancos Privados (BCRA)",
+      "fuenteUrl": "https://www.bcra.gob.ar/",
+      "status": "fallback"
     },
     "tamar": {
-      "tasaAnual": 22.75,
-      "vigenteDesde": "2026-04-17",
-      "fuenteNombre": "BCRA v4",
-      "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
-      "status": "stale",
-      "fechaConsulta": "2026-04-21T20:37:39.952Z",
-      "consenso": 1,
-      "nota": "Último valor BCRA · scraper no pudo refrescar"
+      "tasaAnual": 40,
+      "vigenteDesde": "2026-04-01",
+      "fuenteNombre": "TAMAR Bancos Privados (BCRA)",
+      "fuenteUrl": "https://www.bcra.gob.ar/",
+      "status": "fallback"
     }
   }
 }
