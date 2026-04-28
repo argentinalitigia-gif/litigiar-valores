@@ -52,17 +52,25 @@ const FALLBACK = {
   // ── Tasas (MANUAL) — editar valores.json directamente cuando cambien.
   //     Fuente: CNAT Planilla actualización (PDF mensual) + BNA.com.ar + BPBA.com.ar
   tasas: {
-    acta2601:   {tasaAnual:90,  vigenteDesde:"2026-04-01", fuenteNombre:"CNAT Planilla Acta 2601 (Activa Cart. Gral. BNA 30 días)", fuenteUrl:"https://www.cnat.pjn.gov.ar/", status:"manual", nota:"Verificar contra última planilla publicada por CNAT"},
-    acta2630:   {tasaAnual:95,  vigenteDesde:"2026-04-01", fuenteNombre:"CNAT Planilla Acta 2630 (Nominal 36 meses BNA)", fuenteUrl:"https://www.cnat.pjn.gov.ar/", status:"manual"},
-    acta2658:   {tasaAnual:100, vigenteDesde:"2026-04-01", fuenteNombre:"CNAT Planilla Acta 2658 (Efectiva anual 49-60m BNA)", fuenteUrl:"https://www.cnat.pjn.gov.ar/", status:"manual"},
-    bnaActiva:  {tasaAnual:80,  vigenteDesde:"2026-04-01", fuenteNombre:"BNA Cartera General 30 días", fuenteUrl:"https://www.bna.com.ar/", status:"manual"},
-    bnaPasiva:  {tasaAnual:40,  vigenteDesde:"2026-04-01", fuenteNombre:"BNA Tasa Pasiva", fuenteUrl:"https://www.bna.com.ar/", status:"manual"},
-    bnaLibre36: {tasaAnual:85,  vigenteDesde:"2026-04-01", fuenteNombre:"BNA Préstamo Libre 36 meses", fuenteUrl:"https://www.bna.com.ar/", status:"manual"},
-    bnaLibre72: {tasaAnual:90,  vigenteDesde:"2026-04-01", fuenteNombre:"BNA Préstamo Libre 72 meses", fuenteUrl:"https://www.bna.com.ar/", status:"manual"},
+    // Valores fallback actualizados a abril 2026 (post-desinflación). Verificar
+    // mensualmente contra https://www.cnat.gob.ar/ y https://www.bna.com.ar/
+    // Cuando Playwright corra en GitHub Actions, estas se reescriben con scrape directo.
+    // Status="fallback" → estos valores SÍ se actualizan en cada release del scraper.
+    acta2601:   {tasaAnual:42,  vigenteDesde:"2026-04-01", fuenteNombre:"CNAT Planilla Acta 2601 (Activa Cart. Gral. BNA 30 días) — fallback editorial", fuenteUrl:"https://www.cnat.gob.ar/", status:"fallback", nota:"Estimación — verificar contra planilla CNAT mensual"},
+    acta2630:   {tasaAnual:45,  vigenteDesde:"2026-04-01", fuenteNombre:"CNAT Planilla Acta 2630 (Nominal 36 meses BNA) — fallback editorial", fuenteUrl:"https://www.cnat.gob.ar/", status:"fallback", nota:"Estimación — verificar contra planilla CNAT mensual"},
+    acta2658:   {tasaAnual:50,  vigenteDesde:"2026-04-01", fuenteNombre:"CNAT Planilla Acta 2658 (Efectiva anual 49-60m BNA) — fallback editorial", fuenteUrl:"https://www.cnat.gob.ar/", status:"fallback", nota:"Estimación — verificar contra planilla CNAT mensual"},
+    bnaActiva:  {tasaAnual:42,  vigenteDesde:"2026-04-01", fuenteNombre:"BNA Tasa Activa Cartera General 30 días — fallback editorial", fuenteUrl:"https://www.bna.com.ar/", status:"fallback", nota:"Estimación — verificar contra www.bna.com.ar"},
+    bnaPasiva:  {tasaAnual:21,  vigenteDesde:"2026-04-01", fuenteNombre:"BNA Tasa Pasiva — fallback editorial", fuenteUrl:"https://www.bna.com.ar/", status:"fallback"},
+    bnaLibre36: {tasaAnual:48,  vigenteDesde:"2026-04-01", fuenteNombre:"BNA Préstamo Libre 36 meses — fallback editorial", fuenteUrl:"https://www.bna.com.ar/", status:"fallback", nota:"Estimación — verificar contra www.bna.com.ar"},
+    bnaLibre72: {tasaAnual:52,  vigenteDesde:"2026-04-01", fuenteNombre:"BNA Préstamo Libre 72 meses — fallback editorial", fuenteUrl:"https://www.bna.com.ar/", status:"fallback", nota:"Estimación — verificar contra www.bna.com.ar"},
     bpActiva:   {tasaAnual:75,  vigenteDesde:"2026-04-01", fuenteNombre:"BPBA Activa Cartera General", fuenteUrl:"https://www.bancoprovincia.com.ar/", status:"manual"},
     bpPasiva:   {tasaAnual:45,  vigenteDesde:"2026-04-01", fuenteNombre:"BPBA Pasiva", fuenteUrl:"https://www.bancoprovincia.com.ar/", status:"manual"},
     badlar:     {tasaAnual:35,  vigenteDesde:"2026-04-01", fuenteNombre:"BADLAR Bancos Privados (BCRA)", fuenteUrl:"https://www.bcra.gob.ar/", status:"fallback"},
-    tamar:      {tasaAnual:40,  vigenteDesde:"2026-04-01", fuenteNombre:"TAMAR Bancos Privados (BCRA)", fuenteUrl:"https://www.bcra.gob.ar/", status:"fallback"}
+    tamar:      {tasaAnual:40,  vigenteDesde:"2026-04-01", fuenteNombre:"TAMAR Bancos Privados (BCRA)", fuenteUrl:"https://www.bcra.gob.ar/", status:"fallback"},
+    // Acta 2783 / Plenario Barrios: tasa pura del 6% sumada a actualización CER del BCRA.
+    // El factor CER se aplica luego en el cliente (al-calc-bcra.js) usando el dato CER vigente.
+    acta2783:   {tasaAnual:6,   vigenteDesde:"2026-04-01", fuenteNombre:"CNAT Acta 2783 — Tasa pura 6% sobre CER (BCRA id=30)", fuenteUrl:"https://www.bcra.gob.ar/", status:"fallback", nota:"Aplicar factor CER + 6% anual"},
+    plenarioBarrios: {tasaAnual:6, vigenteDesde:"2026-04-01", fuenteNombre:"Plenario Barrios SCBA — Tasa pura 6% sobre CER", fuenteUrl:"https://www.bcra.gob.ar/", status:"fallback", nota:"Aplicar factor CER + 6% anual (similar a Acta 2783)"}
   }
 };
 
@@ -423,19 +431,32 @@ async function fetchBCRAv4(){
 }
 
 // Mapeo de nuestras tasas → IDs variables BCRA
+//
+// IMPORTANTE: el BCRA NO publica como serie individual la "Tasa Activa Cartera
+// General BNA 30 días" ni las TEAs específicas del BNA (Libre Destino 36/72m,
+// préstamo personal 49-60m, etc.). Esas son tasas DE UN BANCO concreto que solo
+// se obtienen del sitio bna.com.ar (vía Playwright) o de la planilla mensual CNAT.
+//
+// Por eso ACÁ solo mapeamos a BCRA las tasas que SÍ son sistema-promedio o
+// productos publicados por BCRA. Las tasas BNA específicas (Acta 2601/2630/2658,
+// bnaActiva, bnaLibre36, bnaLibre72) NO están en este mapeo — se obtienen
+// exclusivamente desde scraperPlaywright(BNA) o, si falla, quedan en fallback.
 const MAPEO_TASAS = {
-  acta2601:   { idVar: 14, fuenteNombre: "BCRA v4 (Préstamos personales) — aprox Acta 2601 Activa BNA" },
-  acta2630:   { idVar: 14, fuenteNombre: "BCRA v4 (Préstamos personales) — aprox Acta 2630 TNA 36m BNA" },
-  acta2658:   { idVar: 14, fuenteNombre: "BCRA v4 (Préstamos personales) — aprox Acta 2658 libre destino" },
-  bnaActiva:  { idVar: 14, fuenteNombre: "BCRA v4 (Préstamos personales) ≈ Activa BNA" },
-  bnaPasiva:  { idVar: 12, fuenteNombre: "BCRA v4 (Depósitos 30d) ≈ Pasiva BNA" },
-  bnaLibre36: { idVar: 14, fuenteNombre: "BCRA v4 (Préstamos personales) — aprox libre 36m" },
-  bnaLibre72: { idVar: 14, fuenteNombre: "BCRA v4 (Préstamos personales) — aprox libre 72m" },
-  bpActiva:   { idVar: 13, fuenteNombre: "BCRA v4 (Adelantos cta cte) ≈ BPBA Activa" },
-  bpPasiva:   { idVar: 12, fuenteNombre: "BCRA v4 (Depósitos 30d) ≈ BPBA Pasiva" },
-  badlar:     { idVar: 7,  fuenteNombre: "BCRA v4 BADLAR bancos privados (nominal)" },
-  tamar:      { idVar: 44, fuenteNombre: "BCRA v4 TAMAR bancos privados (nominal)" }
+  // Pasiva (depósitos 30d) — id=12 — sí es la fuente correcta para tasa pasiva
+  bnaPasiva:  { idVar: 12, fuenteNombre: "BCRA v4 — Tasa de depósitos 30 días (Pasiva sistema)" },
+  bpPasiva:   { idVar: 12, fuenteNombre: "BCRA v4 — Tasa de depósitos 30 días (Pasiva sistema)" },
+  // Activa BPBA — usamos BADLAR (id=7) como aproximación más razonable que
+  // adelantos en cuenta corriente (id=13). De todos modos lo ideal es scraper directo.
+  bpActiva:   { idVar: 7,  fuenteNombre: "BCRA v4 — BADLAR (aprox. Activa BPBA cuando no hay scrape directo)" },
+  // Series sistema — sí están en BCRA
+  badlar:     { idVar: 7,  fuenteNombre: "BCRA v4 — BADLAR bancos privados (nominal anual)" },
+  tamar:      { idVar: 44, fuenteNombre: "BCRA v4 — TAMAR bancos privados (nominal anual)" }
 };
+
+// Tasas que NUNCA deben venir del BCRA sistema (son específicas de un banco
+// concreto). Si el scraper Playwright BNA falla, quedan en status='fallback'
+// con el último valor manual conocido y nota explícita al usuario.
+const TASAS_SOLO_BNA = ["acta2601","acta2630","acta2658","bnaActiva","bnaLibre36","bnaLibre72"];
 
 // Devuelve tasas scrapeadas en formato listo para mergear
 function aplicarBCRAaTasas(bcraMap){
@@ -477,21 +498,58 @@ async function getBrowser(){
 async function extraerTasasBNA(browser){
   if (!browser) return null;
   const page = await browser.newPage({ userAgent: UA['User-Agent'] });
+  // Lista de URLs candidatas (BNA cambia rutas con frecuencia)
+  const candidatos = [
+    'https://www.bna.com.ar/Personas/PrestamosVigentes',
+    'https://www.bna.com.ar/Personas/Prestamos',
+    'https://www.bna.com.ar/Personas/TasasdeInteres',
+    'https://www.bna.com.ar/Personas',
+    'https://www.bna.com.ar/'
+  ];
+  let resultado = { activa: null, pasiva: null, libre36: null, libre72: null, fuente: null };
   try {
-    await page.goto('https://www.bna.com.ar/Personas/PrestamosVigentes', { waitUntil: 'networkidle', timeout: 40000 });
-    const texto = await page.textContent('body');
-    const match = (regex) => {
-      const m = texto.match(regex);
-      return m ? parseFloat(String(m[1]).replace(',', '.')) : null;
-    };
-    // Patrones flexibles — BNA rotula distinto pero siempre incluye "TNA" o "T.N.A." cerca
-    const activa = match(/Cartera\s*General[^%]{0,400}?(?:TNA|tasa\s*nominal)[^%]{0,100}?(\d{1,3}[,.]\d{1,4})\s*%/i);
-    const libre36 = match(/36\s*(?:meses|cuotas)[^%]{0,400}?(?:TNA|TEA|tasa)[^%]{0,100}?(\d{1,3}[,.]\d{1,4})\s*%/i);
-    const libre72 = match(/72\s*(?:meses|cuotas)[^%]{0,400}?(?:TNA|TEA|tasa)[^%]{0,100}?(\d{1,3}[,.]\d{1,4})\s*%/i);
-    const pasiva = match(/(?:plazo\s*fijo|depósito)[^%]{0,300}?(\d{1,3}[,.]\d{1,4})\s*%/i);
-    return { activa, pasiva, libre36, libre72, fuente: 'https://www.bna.com.ar/Personas/PrestamosVigentes' };
-  } catch(e) {
-    console.warn('[VALORES] BNA Playwright fail:', e.message);
+    for (const url of candidatos) {
+      try {
+        await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
+        const texto = await page.textContent('body');
+        if (!texto || texto.length < 200) continue;
+        const match = (regex) => {
+          const m = texto.match(regex);
+          return m ? parseFloat(String(m[1]).replace(',', '.')) : null;
+        };
+        // Tasa Activa Cartera General BNA 30 días — la del Acta 2601 CNAT
+        if (!resultado.activa) {
+          resultado.activa = match(/Cartera\s*General[^%]{0,400}?(?:TNA|TEA|tasa\s*nominal|tasa\s*efectiva)[^%]{0,100}?(\d{1,3}[,.]\d{1,4})\s*%/i)
+                          || match(/Activa\s*Cartera\s*General[^%]{0,400}?(\d{1,3}[,.]\d{1,4})\s*%/i)
+                          || match(/(?:TNA|TEA)[^%]{0,40}?Cartera[^%]{0,80}?(\d{1,3}[,.]\d{1,4})\s*%/i);
+        }
+        // Préstamos personales libre destino 36/72 meses — Actas 2658/2764
+        if (!resultado.libre36) {
+          resultado.libre36 = match(/Libre\s*Destino[^%]{0,300}?36\s*(?:meses|cuotas)[^%]{0,200}?(?:TNA|TEA)[^%]{0,80}?(\d{1,3}[,.]\d{1,4})\s*%/i)
+                          || match(/36\s*(?:meses|cuotas)[^%]{0,400}?(?:TNA|TEA|tasa)[^%]{0,100}?(\d{1,3}[,.]\d{1,4})\s*%/i);
+        }
+        if (!resultado.libre72) {
+          resultado.libre72 = match(/Libre\s*Destino[^%]{0,300}?72\s*(?:meses|cuotas)[^%]{0,200}?(?:TNA|TEA)[^%]{0,80}?(\d{1,3}[,.]\d{1,4})\s*%/i)
+                          || match(/72\s*(?:meses|cuotas)[^%]{0,400}?(?:TNA|TEA|tasa)[^%]{0,100}?(\d{1,3}[,.]\d{1,4})\s*%/i);
+        }
+        if (!resultado.pasiva) {
+          resultado.pasiva = match(/(?:plazo\s*fijo\s*tradicional|depósito\s*a\s*plazo)[^%]{0,300}?(?:TNA|tasa)[^%]{0,80}?(\d{1,3}[,.]\d{1,4})\s*%/i)
+                          || match(/(?:plazo\s*fijo|depósito)[^%]{0,300}?(\d{1,3}[,.]\d{1,4})\s*%/i);
+        }
+        if (resultado.activa || resultado.libre36 || resultado.libre72) {
+          resultado.fuente = url;
+          // Si tenemos al menos las 3 principales, salimos
+          if (resultado.activa && resultado.libre36 && resultado.libre72) break;
+        }
+      } catch(e) {
+        console.warn('[VALORES] BNA candidato '+url+' fail:', e.message);
+      }
+    }
+    if (resultado.activa || resultado.libre36 || resultado.libre72 || resultado.pasiva) {
+      console.log('[VALORES] BNA Playwright OK: activa='+resultado.activa+' L36='+resultado.libre36+' L72='+resultado.libre72+' pasiva='+resultado.pasiva+' (fuente: '+resultado.fuente+')');
+      return resultado;
+    }
+    console.warn('[VALORES] BNA Playwright: ninguna URL devolvió tasas extraibles');
     return null;
   } finally { await page.close().catch(()=>{}); }
 }
@@ -603,39 +661,116 @@ async function main(){
     console.log('[VALORES] Playwright deshabilitado (PLAYWRIGHT_ENABLED!=1) — usando solo BCRA v4');
   }
 
-  // Cross-consenso: si BNA real y BCRA v4 coinciden (±10%), valor = promedio con consensus=N
+  // ── Construcción de tasasFinales ────────────────────────────────────────
+  // Reglas:
+  //  · Tasas BNA específicas (Acta 2601/2630/2658, bnaActiva, bnaLibre36/72)
+  //    → SOLO si Playwright BNA o CNAT scrape devolvieron valor real.
+  //      No usar BCRA v4 sistema-promedio como sustituto (id=14 Préstamos
+  //      personales NO es la TACG ni la TEA libre destino BNA).
+  //  · Tasas pasivas (bnaPasiva, bpPasiva) → BCRA v4 id=12 es válido (es la
+  //    tasa promedio sistema, comparable a la BNA pasiva).
+  //  · BADLAR / TAMAR → BCRA v4 directo (mismo origen).
+  //  · bpActiva → si Playwright BPBA falla, BADLAR como aproximación con
+  //    nota explícita.
   const tasasFinales = {};
-  if (tasasBCRA) {
-    Object.keys(tasasBCRA).forEach(k => {
-      const fuentes = [tasasBCRA[k].tasaAnual];
-      let notaConsenso = 'BCRA v4';
-      let fuenteUrl = tasasBCRA[k].fuenteUrl;
-      // Agregar BNA real si disponible
-      if (bnaReal && (k === 'acta2601' || k === 'acta2630' || k === 'acta2658' || k === 'bnaActiva')) {
-        if (bnaReal.activa) { fuentes.push(bnaReal.activa); notaConsenso += ' + BNA'; }
+  const TODAS_LAS_TASAS = Object.keys(FALLBACK.tasas);
+
+  TODAS_LAS_TASAS.forEach(k => {
+    const fuentes = [];
+    let notaConsenso = '';
+    let fuenteUrlFinal = null;
+    let fuenteNombreFinal = null;
+    let vigenteDesde = null;
+
+    // 1) BCRA v4 — solo si está en MAPEO_TASAS (= NO es tasa BNA específica)
+    if (tasasBCRA && tasasBCRA[k]) {
+      fuentes.push(tasasBCRA[k].tasaAnual);
+      notaConsenso = MAPEO_TASAS[k] ? MAPEO_TASAS[k].fuenteNombre : tasasBCRA[k].fuenteNombre;
+      fuenteUrlFinal = tasasBCRA[k].fuenteUrl;
+      fuenteNombreFinal = notaConsenso;
+      vigenteDesde = tasasBCRA[k].vigenteDesde;
+    }
+
+    // 2) Playwright BNA (PRIMARIO para tasas BNA específicas)
+    if (bnaReal) {
+      const mapBNA = {
+        acta2601: bnaReal.activa, acta2630: bnaReal.activa, acta2658: bnaReal.libre36,
+        bnaActiva: bnaReal.activa, bnaPasiva: bnaReal.pasiva,
+        bnaLibre36: bnaReal.libre36, bnaLibre72: bnaReal.libre72
+      };
+      const valBNA = mapBNA[k];
+      if (valBNA && isFinite(valBNA) && valBNA > 0 && valBNA < 500) {
+        fuentes.push(valBNA);
+        if (TASAS_SOLO_BNA.includes(k)) {
+          // Esta tasa solo viene confiable de BNA — sobrescribimos fuente
+          fuenteNombreFinal = 'BNA oficial (scrape directo www.bna.com.ar)';
+          fuenteUrlFinal = bnaReal.fuente || 'https://www.bna.com.ar/';
+          vigenteDesde = new Date().toISOString().substring(0,10);
+        } else {
+          notaConsenso += ' + BNA';
+        }
       }
-      if (bnaReal && k === 'bnaLibre36' && bnaReal.libre36) { fuentes.push(bnaReal.libre36); notaConsenso += ' + BNA'; }
-      if (bnaReal && k === 'bnaLibre72' && bnaReal.libre72) { fuentes.push(bnaReal.libre72); notaConsenso += ' + BNA'; }
-      if (bnaReal && k === 'bnaPasiva' && bnaReal.pasiva) { fuentes.push(bnaReal.pasiva); notaConsenso += ' + BNA'; }
-      if (bpbaReal && k === 'bpActiva' && bpbaReal.activa) { fuentes.push(bpbaReal.activa); notaConsenso += ' + BPBA'; }
-      if (bpbaReal && k === 'bpPasiva' && bpbaReal.pasiva) { fuentes.push(bpbaReal.pasiva); notaConsenso += ' + BPBA'; }
-      if (cnatReal && cnatReal[k]) { fuentes.push(cnatReal[k]); notaConsenso += ' + CNAT'; }
+    }
+
+    // 3) Playwright BPBA
+    if (bpbaReal) {
+      const mapBPBA = { bpActiva: bpbaReal.activa, bpPasiva: bpbaReal.pasiva };
+      const v = mapBPBA[k];
+      if (v && isFinite(v) && v > 0 && v < 500) {
+        fuentes.push(v);
+        if (k === 'bpActiva') {
+          fuenteNombreFinal = 'BPBA oficial (scrape directo bancoprovincia.com.ar)';
+          fuenteUrlFinal = bpbaReal.fuente || 'https://www.bancoprovincia.com.ar/';
+          vigenteDesde = new Date().toISOString().substring(0,10);
+        } else {
+          notaConsenso += ' + BPBA';
+        }
+      }
+    }
+
+    // 4) Scrape HTML CNAT/PJN — para Actas
+    if (cnatReal && cnatReal[k] && isFinite(cnatReal[k])) {
+      fuentes.push(cnatReal[k]);
+      if (TASAS_SOLO_BNA.includes(k)) {
+        fuenteNombreFinal = 'CNAT/PJN (planilla oficial)';
+        fuenteUrlFinal = 'https://www.cnat.gob.ar/';
+        vigenteDesde = new Date().toISOString().substring(0,10);
+      } else {
+        notaConsenso += ' + CNAT';
+      }
+    }
+
+    // 5) tasasPub (scrapearTasasPublicadas — regex sobre HTML público)
+    if (tasasPub && tasasPub[k] && tasasPub[k].tasaAnual) {
+      fuentes.push(tasasPub[k].tasaAnual);
+      if (TASAS_SOLO_BNA.includes(k) && !fuenteNombreFinal) {
+        fuenteNombreFinal = tasasPub[k].fuenteNombre;
+        fuenteUrlFinal = tasasPub[k].fuenteUrl;
+      } else {
+        notaConsenso += ' + scrape';
+      }
+    }
+
+    // Decisión final
+    if (fuentes.length > 0) {
       const c = consensuarTasa(fuentes, k);
       if (c) {
-        tasasFinales[k] = Object.assign({}, tasasBCRA[k], {
+        tasasFinales[k] = {
           tasaAnual: c.valor,
-          fuenteNombre: notaConsenso + (c.consenso>1?' (consenso '+c.consenso+')':''),
-          fuenteUrl,
+          vigenteDesde: vigenteDesde || new Date().toISOString().substring(0,10),
+          fuenteNombre: fuenteNombreFinal || notaConsenso,
+          fuenteUrl: fuenteUrlFinal || (tasasBCRA && tasasBCRA[k] ? tasasBCRA[k].fuenteUrl : null),
           status: 'ok',
-          fuentes: fuentes.length > 1 ? fuentes : undefined,
+          fechaConsulta: new Date().toISOString(),
           consenso: c.consenso,
+          fuentes: fuentes.length > 1 ? fuentes : undefined,
           disenso: c.disenso
-        });
+        };
       }
-    });
-  }
-  // Si Playwright agregó valores fuera de BCRA (ej. BNA Libre 36m), se los incorporan también
-  const reemplazarBCRA = Object.keys(tasasFinales).length > 0 ? tasasFinales : tasasBCRA;
+    }
+  });
+
+  const reemplazarBCRA = tasasFinales;
 
   // Helper para elegir entre nuevo / stale / fallback
   const elegir = (seccion, campo, nuevo, fallback) => {
@@ -649,25 +784,59 @@ async function main(){
     return Object.assign({}, fallback, {status:'fallback'});
   };
 
-  // Merge tasas: prioridad → 1) BCRA v4 (oficial) · 2) scrape HTML · 3) prev ok/manual · 4) fallback
+  // Merge tasas: prioridad → 1) BCRA v4 + Playwright (consenso) · 2) scrape HTML · 3) prev ok/manual · 4) fallback
   const tasasPrev = (prev && prev.tasas) || {};
   const tasasSalida = {};
+
+  // Heurística: si el valor previo viene del bug viejo del scraper (que mapeaba
+  // todas las TASAS_SOLO_BNA a id=14 "Préstamos personales"), descartar y usar
+  // fallback manual hasta que Playwright/CNAT scrape devuelvan valor real.
+  const esValorLegadoBuggy = (k, v) => {
+    if (!v || !TASAS_SOLO_BNA.includes(k)) return false;
+    const fn = String(v.fuenteNombre || '');
+    return /Pr[eé]stamos\s*personales/i.test(fn) || /aprox/i.test(fn);
+  };
+
   Object.keys(FALLBACK.tasas).forEach(k => {
     if (reemplazarBCRA && reemplazarBCRA[k]) {
       // BCRA + Playwright consensus — prioridad máxima
       tasasSalida[k] = Object.assign({}, FALLBACK.tasas[k], reemplazarBCRA[k]);
     } else if (tasasPub && tasasPub[k]) {
       tasasSalida[k] = Object.assign({}, FALLBACK.tasas[k], tasasPub[k]);
-    } else if (tasasPrev[k] && tasasPrev[k].status === 'ok') {
-      tasasSalida[k] = Object.assign({}, tasasPrev[k], {status:'stale', nota:'Último valor BCRA · scraper no pudo refrescar'});
+    } else if (tasasPrev[k] && tasasPrev[k].status === 'ok' && !esValorLegadoBuggy(k, tasasPrev[k])) {
+      tasasSalida[k] = Object.assign({}, tasasPrev[k], {status:'stale', nota:'Último valor válido · scraper no pudo refrescar este ciclo'});
     } else if (tasasPrev[k] && tasasPrev[k].status === 'manual') {
       tasasSalida[k] = tasasPrev[k];
     } else {
+      // Cae a fallback manual (las TASAS_SOLO_BNA tienen valores razonables editables)
       tasasSalida[k] = Object.assign({}, FALLBACK.tasas[k]);
     }
   });
+
+  // ── Acta 2783 / Plenario Barrios: tasa pura 6% + factor CER en runtime ──
+  // El cliente (al-calc-bcra.js) calculará el monto = capital × (CER_hasta/CER_desde)
+  //   + capital × 0.06 × años. El scraper aporta CER vigente y el 6% como tasaPura.
+  if (cer && cer.valor) {
+    ['acta2783', 'plenarioBarrios'].forEach(k => {
+      tasasSalida[k] = {
+        tasaAnual: 6,
+        tasaPura: 6,
+        cerReferencia: { fecha: cer.fecha, valor: cer.valor },
+        formula: "Monto = C × (CER_hasta/CER_desde) + C × 0.06 × años",
+        vigenteDesde: cer.fecha,
+        fuenteNombre: k === 'acta2783'
+          ? 'CNAT Acta 2783 — CER (BCRA id=30) + 6% pura anual'
+          : 'Plenario Barrios SCBA — CER (BCRA id=30) + 6% pura anual',
+        fuenteUrl: 'https://api.bcra.gob.ar/estadisticas/v4.0/monetarias/30',
+        status: 'ok',
+        fechaConsulta: new Date().toISOString(),
+        nota: 'El factor CER se calcula dinámicamente con CER inicial y final del período. La tasa pura del 6% es jurisprudencial.'
+      };
+    });
+  }
+
   const cntOK = Object.values(tasasSalida).filter(t => t.status === 'ok').length;
-  console.log('[VALORES] Tasas OK (BCRA v4 + scrape): '+cntOK+'/'+Object.keys(FALLBACK.tasas).length);
+  console.log('[VALORES] Tasas OK (BCRA v4 + scrape): '+cntOK+'/'+Object.keys(tasasSalida).length);
 
   const salida = {
     ok: true,
