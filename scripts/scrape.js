@@ -127,13 +127,52 @@ async function fetchIPC(){
   return {periodo, mensual, interanual, acumulada, fuenteNombre:"INDEC / datos.gob.ar", fuenteUrl:"https://apis.datos.gob.ar/series/api/series/?ids=148.3_INIVELNAL_DICI_M_26", status:"ok", fechaConsulta:new Date().toISOString()};
 }
 
+// Mapa de series datos.gob.ar → idVariable BCRA v4 (fuente más actual)
+// datos.gob.ar suele atrasarse 4-8 semanas; BCRA v4 publica diario.
+const BCRA_V4_FALLBACK = {
+  '94.2_UVAD_D_0_0_10': { id: 31, nombre: 'UVA' },        // BCRA v4 id 31 = UVA
+  '94.2_CD_D_0_0_10':   { id: 30, nombre: 'CER' },        // BCRA v4 id 30 = CER
+  '94.2_UVID_D_0_0_10': { id: 32, nombre: 'UVI' }         // BCRA v4 id 32 = UVI
+};
+
 async function fetchBCRAdiario(id){
+  // 1) Intentar BCRA v4 directo (más actualizado)
+  const fb = BCRA_V4_FALLBACK[id];
+  if (fb) {
+    try {
+      const https = require('https');
+      const hoy = new Date();
+      const desde = new Date(hoy.getTime() - 7*86400000).toISOString().substring(0,10);
+      const hasta = hoy.toISOString().substring(0,10);
+      const r = await axios.get(`https://api.bcra.gob.ar/estadisticas/v4.0/monetarias/${fb.id}?desde=${desde}&hasta=${hasta}`, {
+        timeout: 20000,
+        headers: UA,
+        httpsAgent: new https.Agent({ rejectUnauthorized: false })
+      });
+      const det = r.data && r.data.results && r.data.results[0] && r.data.results[0].detalle;
+      if (det && det.length) {
+        // El primer elemento es el más reciente
+        const ultimo = det[0];
+        return {
+          fecha: ultimo.fecha,
+          valor: Number(Number(ultimo.valor).toFixed(4)),
+          fuenteNombre: `BCRA v4 (${fb.nombre} id=${fb.id})`,
+          fuenteUrl: `https://api.bcra.gob.ar/estadisticas/v4.0/monetarias/${fb.id}`,
+          status: 'ok',
+          fechaConsulta: new Date().toISOString()
+        };
+      }
+    } catch(e) {
+      console.warn(`[VALORES] BCRA v4 ${fb.nombre} fail:`, e.message);
+    }
+  }
+  // 2) Fallback a datos.gob.ar
   const r = await fetchSerieGob('https://apis.datos.gob.ar/series/api/series/?ids='+id+'&sort=desc&limit=1&metadata=none');
   if (!r) return null;
   return {
     fecha: String(r[0]).substring(0,10),
     valor: Number(Number(r[1]).toFixed(4)),
-    fuenteNombre: 'BCRA / datos.gob.ar',
+    fuenteNombre: 'BCRA / datos.gob.ar (puede tener atraso)',
     fuenteUrl: 'https://apis.datos.gob.ar/series/api/series/?ids='+id,
     status: 'ok',
     fechaConsulta: new Date().toISOString()
