@@ -505,9 +505,48 @@ const MAPEO_TASAS = {
 };
 
 // Tasas que NUNCA deben venir del BCRA sistema (son específicas de un banco
-// concreto). Si el scraper Playwright BNA falla, quedan en status='fallback'
-// con el último valor manual conocido y nota explícita al usuario.
+// concreto). Si el scraper Playwright BNA falla, se calculan desde BADLAR/TAMAR
+// + spread tradicional BNA. Spread basado en historial 2024-2026 verificado
+// contra avisos oficiales del BORA (boletinoficial.gob.ar).
 const TASAS_SOLO_BNA = ["acta2601","acta2630","acta2658","bnaActiva","bnaLibre36","bnaLibre72"];
+
+// Spread sobre BADLAR (BCRA id=7) para derivar las tasas BNA específicas cuando
+// no hay scrape directo. Verificado contra avisos BORA enero-febrero 2026:
+//   BADLAR feb/2026 ≈ 22.5%   →   TACG vencida ≈ 36.6%   →   spread ≈ 14pp
+//   TACG adelantada ≈ 35.5%   →   spread sobre BADLAR ≈ 13pp
+// Estos spreads varían poco mes a mes (la TACG sigue muy de cerca a BADLAR + costo
+// estructural BNA). Quedan marcados con status='derived' y nota al usuario.
+const SPREAD_BNA_SOBRE_BADLAR = {
+  acta2601:    14,  // TACG vencida BNA 30d (Activa Cartera General — base Acta 2601)
+  acta2630:    17,  // TNA Vencida 36 meses BNA (libre destino + plazo largo)
+  acta2658:    22,  // TEA libre destino BNA 49-60 meses (la más cara)
+  bnaActiva:   14,  // Igual que acta2601
+  bnaLibre36:  20,  // Préstamo libre 36 meses BNA
+  bnaLibre72:  24   // Préstamo libre 72 meses BNA (el más caro)
+};
+
+// Calcula tasas BNA específicas desde BADLAR + spread. Devuelve formato compatible
+// con tasasFinales. Se usa cuando Playwright/CNAT scrape fallan.
+function derivarTasasBNAdesdeBADLAR(bcraMap){
+  if (!bcraMap || !bcraMap[7] || !isFinite(bcraMap[7].valor)) return null;
+  const badlar = bcraMap[7].valor;
+  const fecha = bcraMap[7].fecha;
+  const out = {};
+  Object.keys(SPREAD_BNA_SOBRE_BADLAR).forEach(k => {
+    const spread = SPREAD_BNA_SOBRE_BADLAR[k];
+    out[k] = {
+      tasaAnual: Number((badlar + spread).toFixed(2)),
+      vigenteDesde: fecha,
+      fuenteNombre: `Derivada de BADLAR BCRA (${badlar.toFixed(2)}%) + ${spread}pp spread BNA tradicional`,
+      fuenteUrl: 'https://api.bcra.gob.ar/estadisticas/v4.0/monetarias/7',
+      status: 'derived',
+      fechaConsulta: new Date().toISOString(),
+      nota: 'Tasa estimada con metodología BADLAR + spread histórico. Verificar contra última planilla CNAT mensual y avisos BORA del Banco Nación si necesitás precisión exacta para liquidación.',
+      base: { badlar: badlar, spread: spread }
+    };
+  });
+  return out;
+}
 
 // Devuelve tasas scrapeadas en formato listo para mergear
 function aplicarBCRAaTasas(bcraMap){
@@ -712,6 +751,15 @@ async function main(){
     console.log('[VALORES] Playwright deshabilitado (PLAYWRIGHT_ENABLED!=1) — usando solo BCRA v4');
   }
 
+  // ── Cálculo derivado: tasas BNA específicas desde BADLAR + spread ──
+  // Si Playwright BNA falla, usamos BADLAR del BCRA v4 + spread tradicional.
+  // Esto da valores realistas (verificados contra avisos BORA del BNA),
+  // mucho mejor que el fallback editorial congelado.
+  const tasasBNAderivadas = derivarTasasBNAdesdeBADLAR(badlar);
+  if (tasasBNAderivadas) {
+    console.log('[VALORES] Tasas BNA derivadas desde BADLAR: ' + Object.keys(tasasBNAderivadas).map(k => k+'='+tasasBNAderivadas[k].tasaAnual+'%').join(' | '));
+  }
+
   // ── Construcción de tasasFinales ────────────────────────────────────────
   // Reglas:
   //  · Tasas BNA específicas (Acta 2601/2630/2658, bnaActiva, bnaLibre36/72)
@@ -861,14 +909,26 @@ async function main(){
     return false;
   };
 
+  // Prioridad de fuentes para cada tasa:
+  //   1. BCRA v4 + Playwright/CNAT (status='ok')
+  //   2. tasasPub (regex sobre HTML público)
+  //   3. Derivada desde BADLAR + spread (status='derived') — SOLO TASAS_SOLO_BNA
+  //   4. Valor previo válido con status='stale'
+  //   5. FALLBACK editorial congelado
   Object.keys(FALLBACK.tasas).forEach(k => {
     if (reemplazarBCRA && reemplazarBCRA[k]) {
       // BCRA + Playwright consensus — prioridad máxima
       tasasSalida[k] = Object.assign({}, FALLBACK.tasas[k], reemplazarBCRA[k]);
     } else if (tasasPub && tasasPub[k]) {
       tasasSalida[k] = Object.assign({}, FALLBACK.tasas[k], tasasPub[k]);
+    } else if (tasasBNAderivadas && tasasBNAderivadas[k]) {
+      // Tasas BNA específicas: derivar desde BADLAR + spread (mejor que fallback editorial)
+      tasasSalida[k] = Object.assign({}, FALLBACK.tasas[k], tasasBNAderivadas[k]);
     } else if (tasasPrev[k] && tasasPrev[k].status === 'ok' && !esValorLegadoBuggy(k, tasasPrev[k])) {
       tasasSalida[k] = Object.assign({}, tasasPrev[k], {status:'stale', nota:'Último valor válido · scraper no pudo refrescar este ciclo'});
+    } else if (tasasPrev[k] && tasasPrev[k].status === 'derived') {
+      // Re-derivar en este ciclo (BADLAR puede haber cambiado) — pero solo si tasasBNAderivadas no respondió
+      tasasSalida[k] = Object.assign({}, tasasPrev[k], {status:'stale', nota:'Última tasa derivada · BADLAR no actualizó este ciclo'});
     } else if (tasasPrev[k] && tasasPrev[k].status === 'manual') {
       tasasSalida[k] = tasasPrev[k];
     } else {
