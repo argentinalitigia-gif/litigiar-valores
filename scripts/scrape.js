@@ -407,22 +407,34 @@ async function scrapearTasasPublicadas(){
         bpPasiva:   /(?:BP|Banco\s*Provincia)[^%]{0,30}?Pasiva[^%]{0,80}?(\d{1,4}[,.]\d{1,4})\s*%/i
       };
 
+      // Pisos razonables por tasa — protege contra regex que matchee "2.219%"
+      // u otros números basura. Las tasas activas BNA están históricamente
+      // por encima del 15% anual desde hace +10 años; las pasivas BNA y plazo
+      // fijo desde hace +10 años están encima del 5%.
+      var MIN_RAZONABLE = {
+        acta2601: 15, acta2630: 15, acta2658: 15, acta2764: 15, acta2783: 3,
+        bnaActiva: 15, bnaLibre36: 15, bnaLibre72: 15,
+        bpActiva: 15, bnaPasiva: 5, bpPasiva: 5
+      };
+
       Object.keys(patrones).forEach(function(key){
         if (tasas[key]) return; // ya lo tenemos de otra fuente
         var m = texto.match(patrones[key]);
         if (m) {
           var val = parseFloat(String(m[1]).replace(',', '.'));
-          // Filtro razonable: tasa entre 1% y 500% anual
-          if (isFinite(val) && val >= 1 && val <= 500) {
-            tasas[key] = {
-              tasaAnual: val,
-              fuenteNombre: url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0],
-              fuenteUrl: url,
-              status: 'ok',
-              fechaConsulta: new Date().toISOString()
-            };
-            if (!fuenteExitosa) fuenteExitosa = url;
+          var minOK = MIN_RAZONABLE[key] || 1;
+          if (!isFinite(val) || val < minOK || val > 500) {
+            console.warn('[VALORES] Descartado '+key+'='+val+'% (fuente '+url+' — fuera de rango razonable >='+minOK+'%)');
+            return;
           }
+          tasas[key] = {
+            tasaAnual: val,
+            fuenteNombre: url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0],
+            fuenteUrl: url,
+            status: 'ok',
+            fechaConsulta: new Date().toISOString()
+          };
+          if (!fuenteExitosa) fuenteExitosa = url;
         }
       });
 
@@ -830,10 +842,23 @@ async function main(){
   // Heurística: si el valor previo viene del bug viejo del scraper (que mapeaba
   // todas las TASAS_SOLO_BNA a id=14 "Préstamos personales"), descartar y usar
   // fallback manual hasta que Playwright/CNAT scrape devuelvan valor real.
+  // También descarta valores fuera del piso razonable por tipo de tasa.
+  const PISO_RAZONABLE = {
+    acta2601: 15, acta2630: 15, acta2658: 15, acta2764: 15,
+    bnaActiva: 15, bnaLibre36: 15, bnaLibre72: 15, bpActiva: 15,
+    bnaPasiva: 5, bpPasiva: 5
+  };
   const esValorLegadoBuggy = (k, v) => {
-    if (!v || !TASAS_SOLO_BNA.includes(k)) return false;
-    const fn = String(v.fuenteNombre || '');
-    return /Pr[eé]stamos\s*personales/i.test(fn) || /aprox/i.test(fn);
+    if (!v) return false;
+    // Tasa fuera de rango razonable (ej: 2.219% para acta2601 = bug del scraper)
+    const piso = PISO_RAZONABLE[k];
+    if (piso && typeof v.tasaAnual === 'number' && v.tasaAnual < piso) return true;
+    // Bug del mapeo viejo a id=14 Préstamos personales
+    if (TASAS_SOLO_BNA.includes(k)) {
+      const fn = String(v.fuenteNombre || '');
+      if (/Pr[eé]stamos\s*personales/i.test(fn) || /aprox/i.test(fn)) return true;
+    }
+    return false;
   };
 
   Object.keys(FALLBACK.tasas).forEach(k => {
