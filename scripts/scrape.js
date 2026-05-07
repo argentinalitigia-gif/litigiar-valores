@@ -791,6 +791,13 @@ async function main(){
     }
 
     // 2) Playwright BNA (PRIMARIO para tasas BNA específicas)
+    // Validación de rango por tipo: si Playwright extrae basura del sitio
+    // (ej: 2.219% de un costo financiero o promo), descartamos y caemos a
+    // BADLAR-derived. El piso real para tasas activas BNA en 2024-2026 es ~25%.
+    const PISO_BNA = {
+      acta2601: 25, acta2630: 25, acta2658: 25, bnaActiva: 25,
+      bnaLibre36: 25, bnaLibre72: 25, bnaPasiva: 5
+    };
     if (bnaReal) {
       const mapBNA = {
         acta2601: bnaReal.activa, acta2630: bnaReal.activa, acta2658: bnaReal.libre36,
@@ -798,7 +805,9 @@ async function main(){
         bnaLibre36: bnaReal.libre36, bnaLibre72: bnaReal.libre72
       };
       const valBNA = mapBNA[k];
-      if (valBNA && isFinite(valBNA) && valBNA > 0 && valBNA < 500) {
+      const pisoMin = PISO_BNA[k] || 1;
+      // Validación: tasa debe estar entre piso razonable y 200% (2024-2026 ya bajó la inflación)
+      if (valBNA && isFinite(valBNA) && valBNA >= pisoMin && valBNA < 200) {
         fuentes.push(valBNA);
         if (TASAS_SOLO_BNA.includes(k)) {
           // Esta tasa solo viene confiable de BNA — sobrescribimos fuente
@@ -808,6 +817,8 @@ async function main(){
         } else {
           notaConsenso += ' + BNA';
         }
+      } else if (valBNA) {
+        console.warn('[VALORES] BNA Playwright '+k+'='+valBNA+'% fuera de rango ['+pisoMin+', 200] — descartado, se deriva de BADLAR');
       }
     }
 
