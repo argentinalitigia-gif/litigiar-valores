@@ -1,13 +1,13 @@
 {
   "ok": true,
-  "actualizadoAl": "2026-10-19T18:12:06.280Z",
+  "actualizadoAl": "2026-10-20T03:03:24.190Z",
   "pba": {
     "jusLey14967": {
       "valor": 53232,
       "fuenteNombre": "Colegio Morón",
       "fuenteUrl": "https://www.scba.gov.ar/",
       "status": "ok",
-      "fechaConsulta": "2026-10-19T18:11:33.785Z"
+      "fechaConsulta": "2026-10-20T03:02:51.483Z"
     },
     "jusDL8904": {
       "valor": 33998,
@@ -21,21 +21,21 @@
       "fuenteNombre": "Colegio Morón",
       "fuenteUrl": "https://www.cajaabogados.org.ar/",
       "status": "ok",
-      "fechaConsulta": "2026-10-19T18:11:33.785Z"
+      "fechaConsulta": "2026-10-20T03:02:51.483Z"
     },
     "bonoVerde8480": {
       "valor": 26600,
       "fuenteNombre": "Colegio Morón",
       "fuenteUrl": "https://colproba.org.ar/",
       "status": "ok",
-      "fechaConsulta": "2026-10-19T18:11:33.785Z"
+      "fechaConsulta": "2026-10-20T03:02:51.483Z"
     },
     "bonoAzul8480": {
       "valor": 13300,
       "fuenteNombre": "Colegio Morón",
       "fuenteUrl": "https://colproba.org.ar/",
       "status": "ok",
-      "fechaConsulta": "2026-10-19T18:11:33.785Z"
+      "fechaConsulta": "2026-10-20T03:02:51.483Z"
     }
   },
   "ipc": {
@@ -46,7 +46,7 @@
     "fuenteNombre": "INDEC / datos.gob.ar",
     "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=148.3_INIVELNAL_DICI_M_26",
     "status": "ok",
-    "fechaConsulta": "2026-10-19T18:11:30.596Z"
+    "fechaConsulta": "2026-10-20T03:02:48.709Z"
   },
   "ipcGba": {
     "periodo": "2026-03",
@@ -62,8 +62,9 @@
     "valor": 1837609.35,
     "fuenteNombre": "MTSS / datos.gob.ar",
     "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=158.1_REPTE_0_0_5",
-    "status": "ok",
-    "fechaConsulta": "2026-10-19T18:11:32.192Z"
+    "status": "stale",
+    "fechaConsulta": "2026-10-19T18:11:32.192Z",
+    "nota": "Se mantiene último valor válido"
   },
   "smvm": {
     "periodo": "2027-04",
@@ -71,32 +72,32 @@
     "fuenteNombre": "MTEySS / datos.gob.ar",
     "fuenteUrl": "https://apis.datos.gob.ar/series/api/series/?ids=57.1_SMVMM_0_M_34",
     "status": "ok",
-    "fechaConsulta": "2026-10-19T18:11:32.295Z"
+    "fechaConsulta": "2026-10-20T03:02:48.214Z"
   },
   "bcra": {
     "uva": {
-      "fecha": "2026-10-19",
-      "valor": 2159.1,
+      "fecha": "2026-10-20",
+      "valor": 2163.03,
       "fuenteNombre": "BCRA v4 (UVA id=31)",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias/31",
       "status": "ok",
-      "fechaConsulta": "2026-10-19T18:11:30.671Z"
+      "fechaConsulta": "2026-10-20T03:02:48.253Z"
     },
     "cer": {
-      "fecha": "2026-10-19",
-      "valor": 856.5363,
+      "fecha": "2026-10-20",
+      "valor": 857.0565,
       "fuenteNombre": "BCRA v4 (CER id=30)",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias/30",
       "status": "ok",
-      "fechaConsulta": "2026-10-19T18:11:30.687Z"
+      "fechaConsulta": "2026-10-20T03:02:48.270Z"
     },
     "uvi": {
-      "fecha": "2026-10-19",
-      "valor": 1583.81,
+      "fecha": "2026-10-20",
+      "valor": 1587.72,
       "fuenteNombre": "BCRA v4 (UVI id=32)",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias/32",
       "status": "ok",
-      "fechaConsulta": "2026-10-19T18:11:30.690Z"
+      "fechaConsulta": "2026-10-20T03:02:48.375Z"
     },
     "icl": {
       "fecha": "16/11/2026",
@@ -104,7 +105,7 @@
       "fuenteNombre": "BCRA diar_icl.xls",
       "fuenteUrl": "https://www.bcra.gob.ar/Pdfs/PublicacionesEstadisticas/diar_icl.xls",
       "status": "ok",
-      "fechaConsulta": "2026-10-19T18:11:31.258Z"
+      "fechaConsulta": "2026-10-20T03:02:50.272Z"
     }
   },
   "canastaCrianza": {
@@ -119,117 +120,117 @@
   },
   "tasas": {
     "acta2601": {
-      "tasaAnual": 37.13,
-      "vigenteDesde": "2026-10-15",
-      "fuenteNombre": "Derivada de BADLAR BCRA (23.13%) + 14pp spread BNA tradicional",
+      "tasaAnual": 37.63,
+      "vigenteDesde": "2026-10-16",
+      "fuenteNombre": "Derivada de BADLAR BCRA (23.63%) + 14pp spread BNA tradicional",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias/7",
       "status": "derived",
       "nota": "Tasa estimada con metodología BADLAR + spread histórico. Verificar contra última planilla CNAT mensual y avisos BORA del Banco Nación si necesitás precisión exacta para liquidación.",
-      "fechaConsulta": "2026-10-19T18:12:06.278Z",
+      "fechaConsulta": "2026-10-20T03:03:24.189Z",
       "base": {
-        "badlar": 23.125,
+        "badlar": 23.625,
         "spread": 14
       }
     },
     "acta2630": {
-      "tasaAnual": 40.13,
-      "vigenteDesde": "2026-10-15",
-      "fuenteNombre": "Derivada de BADLAR BCRA (23.13%) + 17pp spread BNA tradicional",
+      "tasaAnual": 40.63,
+      "vigenteDesde": "2026-10-16",
+      "fuenteNombre": "Derivada de BADLAR BCRA (23.63%) + 17pp spread BNA tradicional",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias/7",
       "status": "derived",
       "nota": "Tasa estimada con metodología BADLAR + spread histórico. Verificar contra última planilla CNAT mensual y avisos BORA del Banco Nación si necesitás precisión exacta para liquidación.",
-      "fechaConsulta": "2026-10-19T18:12:06.278Z",
+      "fechaConsulta": "2026-10-20T03:03:24.189Z",
       "base": {
-        "badlar": 23.125,
+        "badlar": 23.625,
         "spread": 17
       }
     },
     "acta2658": {
-      "tasaAnual": 45.13,
-      "vigenteDesde": "2026-10-15",
-      "fuenteNombre": "Derivada de BADLAR BCRA (23.13%) + 22pp spread BNA tradicional",
+      "tasaAnual": 45.63,
+      "vigenteDesde": "2026-10-16",
+      "fuenteNombre": "Derivada de BADLAR BCRA (23.63%) + 22pp spread BNA tradicional",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias/7",
       "status": "derived",
       "nota": "Tasa estimada con metodología BADLAR + spread histórico. Verificar contra última planilla CNAT mensual y avisos BORA del Banco Nación si necesitás precisión exacta para liquidación.",
-      "fechaConsulta": "2026-10-19T18:12:06.278Z",
+      "fechaConsulta": "2026-10-20T03:03:24.189Z",
       "base": {
-        "badlar": 23.125,
+        "badlar": 23.625,
         "spread": 22
       }
     },
     "bnaActiva": {
-      "tasaAnual": 37.13,
-      "vigenteDesde": "2026-10-15",
-      "fuenteNombre": "Derivada de BADLAR BCRA (23.13%) + 14pp spread BNA tradicional",
+      "tasaAnual": 37.63,
+      "vigenteDesde": "2026-10-16",
+      "fuenteNombre": "Derivada de BADLAR BCRA (23.63%) + 14pp spread BNA tradicional",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias/7",
       "status": "derived",
       "nota": "Tasa estimada con metodología BADLAR + spread histórico. Verificar contra última planilla CNAT mensual y avisos BORA del Banco Nación si necesitás precisión exacta para liquidación.",
-      "fechaConsulta": "2026-10-19T18:12:06.278Z",
+      "fechaConsulta": "2026-10-20T03:03:24.189Z",
       "base": {
-        "badlar": 23.125,
+        "badlar": 23.625,
         "spread": 14
       }
     },
     "bnaPasiva": {
-      "tasaAnual": 21.74,
-      "vigenteDesde": "2026-10-15",
+      "tasaAnual": 22.66,
+      "vigenteDesde": "2026-10-16",
       "fuenteNombre": "BCRA v4 — Tasa de depósitos 30 días (Pasiva sistema)",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
       "status": "ok",
-      "fechaConsulta": "2026-10-19T18:12:06.279Z",
+      "fechaConsulta": "2026-10-20T03:03:24.189Z",
       "consenso": 1
     },
     "bnaLibre36": {
-      "tasaAnual": 43.13,
-      "vigenteDesde": "2026-10-15",
-      "fuenteNombre": "Derivada de BADLAR BCRA (23.13%) + 20pp spread BNA tradicional",
+      "tasaAnual": 43.63,
+      "vigenteDesde": "2026-10-16",
+      "fuenteNombre": "Derivada de BADLAR BCRA (23.63%) + 20pp spread BNA tradicional",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias/7",
       "status": "derived",
       "nota": "Tasa estimada con metodología BADLAR + spread histórico. Verificar contra última planilla CNAT mensual y avisos BORA del Banco Nación si necesitás precisión exacta para liquidación.",
-      "fechaConsulta": "2026-10-19T18:12:06.278Z",
+      "fechaConsulta": "2026-10-20T03:03:24.189Z",
       "base": {
-        "badlar": 23.125,
+        "badlar": 23.625,
         "spread": 20
       }
     },
     "bnaLibre72": {
-      "tasaAnual": 47.13,
-      "vigenteDesde": "2026-10-15",
-      "fuenteNombre": "Derivada de BADLAR BCRA (23.13%) + 24pp spread BNA tradicional",
+      "tasaAnual": 47.63,
+      "vigenteDesde": "2026-10-16",
+      "fuenteNombre": "Derivada de BADLAR BCRA (23.63%) + 24pp spread BNA tradicional",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias/7",
       "status": "derived",
       "nota": "Tasa estimada con metodología BADLAR + spread histórico. Verificar contra última planilla CNAT mensual y avisos BORA del Banco Nación si necesitás precisión exacta para liquidación.",
-      "fechaConsulta": "2026-10-19T18:12:06.278Z",
+      "fechaConsulta": "2026-10-20T03:03:24.189Z",
       "base": {
-        "badlar": 23.125,
+        "badlar": 23.625,
         "spread": 24
       }
     },
     "bpActiva": {
-      "tasaAnual": 23.13,
-      "vigenteDesde": "2026-10-15",
+      "tasaAnual": 23.63,
+      "vigenteDesde": "2026-10-16",
       "fuenteNombre": "BCRA v4 — BADLAR (aprox. Activa BPBA cuando no hay scrape directo)",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
       "status": "ok",
-      "fechaConsulta": "2026-10-19T18:12:06.279Z",
+      "fechaConsulta": "2026-10-20T03:03:24.189Z",
       "consenso": 1
     },
     "bpPasiva": {
-      "tasaAnual": 21.74,
-      "vigenteDesde": "2026-10-15",
+      "tasaAnual": 22.66,
+      "vigenteDesde": "2026-10-16",
       "fuenteNombre": "BCRA v4 — Tasa de depósitos 30 días (Pasiva sistema)",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
       "status": "ok",
-      "fechaConsulta": "2026-10-19T18:12:06.279Z",
+      "fechaConsulta": "2026-10-20T03:03:24.189Z",
       "consenso": 1
     },
     "badlar": {
-      "tasaAnual": 23.13,
-      "vigenteDesde": "2026-10-15",
+      "tasaAnual": 23.63,
+      "vigenteDesde": "2026-10-16",
       "fuenteNombre": "BCRA v4 — BADLAR bancos privados (nominal anual)",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
       "status": "ok",
-      "fechaConsulta": "2026-10-19T18:12:06.279Z",
+      "fechaConsulta": "2026-10-20T03:03:24.190Z",
       "consenso": 1
     },
     "tamar": {
@@ -237,38 +238,39 @@
       "vigenteDesde": "2026-10-15",
       "fuenteNombre": "BCRA v4 — TAMAR bancos privados (nominal anual)",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias",
-      "status": "ok",
+      "status": "stale",
       "fechaConsulta": "2026-10-19T18:12:06.279Z",
-      "consenso": 1
+      "consenso": 1,
+      "nota": "Último valor válido · scraper no pudo refrescar este ciclo"
     },
     "acta2783": {
       "tasaAnual": 6,
       "tasaPura": 6,
       "cerReferencia": {
-        "fecha": "2026-10-19",
-        "valor": 856.5363
+        "fecha": "2026-10-20",
+        "valor": 857.0565
       },
       "formula": "Monto = C × (CER_hasta/CER_desde) + C × 0.06 × años",
-      "vigenteDesde": "2026-10-19",
+      "vigenteDesde": "2026-10-20",
       "fuenteNombre": "CNAT Acta 2783 — CER (BCRA id=30) + 6% pura anual",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias/30",
       "status": "ok",
-      "fechaConsulta": "2026-10-19T18:12:06.280Z",
+      "fechaConsulta": "2026-10-20T03:03:24.190Z",
       "nota": "El factor CER se calcula dinámicamente con CER inicial y final del período. La tasa pura del 6% es jurisprudencial."
     },
     "plenarioBarrios": {
       "tasaAnual": 6,
       "tasaPura": 6,
       "cerReferencia": {
-        "fecha": "2026-10-19",
-        "valor": 856.5363
+        "fecha": "2026-10-20",
+        "valor": 857.0565
       },
       "formula": "Monto = C × (CER_hasta/CER_desde) + C × 0.06 × años",
-      "vigenteDesde": "2026-10-19",
+      "vigenteDesde": "2026-10-20",
       "fuenteNombre": "Plenario Barrios SCBA — CER (BCRA id=30) + 6% pura anual",
       "fuenteUrl": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias/30",
       "status": "ok",
-      "fechaConsulta": "2026-10-19T18:12:06.280Z",
+      "fechaConsulta": "2026-10-20T03:03:24.190Z",
       "nota": "El factor CER se calcula dinámicamente con CER inicial y final del período. La tasa pura del 6% es jurisprudencial."
     }
   }
